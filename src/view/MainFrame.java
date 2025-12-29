@@ -42,7 +42,7 @@ public class MainFrame extends JFrame {
     private JPanel dashboardPanel;
     private SubscriptionView subscriptionPanel;
     private DepartmentView departmentPanel;
-    private JPanel reportPanel;
+    private ReportView reportPanel;
 
     public MainFrame(User user) {
         this.currentUser = user;
@@ -234,7 +234,7 @@ public class MainFrame extends JFrame {
         dashboardPanel = createDashboardPanel();
         subscriptionPanel = new SubscriptionView();
         departmentPanel = new DepartmentView();
-        reportPanel = createReportPanel();
+        reportPanel = new ReportView();
 
         // Add to card layout
         contentPanel.add(dashboardPanel, "dashboard");
@@ -292,19 +292,7 @@ public class MainFrame extends JFrame {
         return card;
     }
 
-    private JPanel createReportPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setOpaque(false);
-
-        JLabel lblComingSoon = new JLabel("📊 Fitur Laporan - Coming Soon");
-        lblComingSoon.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblComingSoon.setForeground(Color.GRAY);
-        lblComingSoon.setHorizontalAlignment(SwingConstants.CENTER);
-
-        panel.add(lblComingSoon, BorderLayout.CENTER);
-
-        return panel;
-    }
+    // ReportView is now used directly instead of placeholder
 
     private void setupMenuAccess() {
         // Operator tidak bisa akses menu tertentu
