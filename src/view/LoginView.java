@@ -130,7 +130,7 @@ public class LoginView extends JFrame {
         mainPanel.add(wrapperPanel, BorderLayout.CENTER);
 
         // Footer
-        JLabel lblFooter = new JLabel("© 2024 SaaS-Track Management System");
+        JLabel lblFooter = new JLabel("© 2025 SaaS-Track - Kelompok 8");
         lblFooter.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         lblFooter.setForeground(new Color(200, 200, 200));
         lblFooter.setHorizontalAlignment(SwingConstants.CENTER);
