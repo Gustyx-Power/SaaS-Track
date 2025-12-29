@@ -10,8 +10,8 @@ import java.sql.SQLException;
 public class DatabaseConnection {
 
     private static final String URL = "jdbc:mysql://localhost:3306/db_saas_track";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private static final String USER = "saastrack";
+    private static final String PASSWORD = "saastrack123";
 
     private static Connection connection = null;
 
