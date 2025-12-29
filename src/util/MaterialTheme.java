@@ -20,6 +20,7 @@ public class MaterialTheme {
     // Secondary
     public static final Color SECONDARY = new Color(98, 91, 113);
     public static final Color SECONDARY_CONTAINER = new Color(232, 222, 248);
+    public static final Color ON_SECONDARY_CONTAINER = new Color(30, 25, 43);
 
     // Tertiary
     public static final Color TERTIARY = new Color(125, 82, 96);

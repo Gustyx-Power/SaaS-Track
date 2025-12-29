@@ -1,19 +1,19 @@
 package view;
 
 import dao.SubscriptionDAO;
+import util.MaterialTheme;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 
 /**
- * View untuk menampilkan laporan dan statistik langganan
+ * ReportView dengan Material Design 3
  */
 public class ReportView extends JPanel {
 
@@ -23,14 +23,9 @@ public class ReportView extends JPanel {
     private JButton btnRefresh, btnExport;
     private SubscriptionDAO subscriptionDAO;
 
-    private static final Color PRIMARY = new Color(41, 128, 185);
-    private static final Color SUCCESS = new Color(39, 174, 96);
-    private static final Color WARNING = new Color(241, 196, 15);
-    private static final Color DANGER = new Color(231, 76, 60);
-
     public ReportView() {
         subscriptionDAO = new SubscriptionDAO();
-        setLayout(new BorderLayout(15, 15));
+        setLayout(new BorderLayout(24, 24));
         setOpaque(false);
 
         add(createStatsPanel(), BorderLayout.NORTH);
@@ -41,7 +36,7 @@ public class ReportView extends JPanel {
     }
 
     private JPanel createStatsPanel() {
-        JPanel panel = new JPanel(new GridLayout(1, 4, 15, 0));
+        JPanel panel = new JPanel(new GridLayout(1, 4, 16, 0));
         panel.setOpaque(false);
 
         lblTotalSubs = new JLabel("0");
@@ -49,46 +44,71 @@ public class ReportView extends JPanel {
         lblExpiredSubs = new JLabel("0");
         lblTotalCost = new JLabel("Rp 0");
 
-        panel.add(createStatCard("📋 Total Langganan", lblTotalSubs, PRIMARY));
-        panel.add(createStatCard("✅ Aktif", lblActiveSubs, SUCCESS));
-        panel.add(createStatCard("❌ Expired", lblExpiredSubs, DANGER));
-        panel.add(createStatCard("💰 Total Biaya/Bulan", lblTotalCost, new Color(155, 89, 182)));
+        panel.add(createStatCard("📋", "Total Langganan", lblTotalSubs, MaterialTheme.PRIMARY,
+                MaterialTheme.PRIMARY_CONTAINER));
+        panel.add(createStatCard("✅", "Aktif", lblActiveSubs, MaterialTheme.SUCCESS, MaterialTheme.SUCCESS_CONTAINER));
+        panel.add(createStatCard("❌", "Expired", lblExpiredSubs, MaterialTheme.ERROR, MaterialTheme.ERROR_CONTAINER));
+        panel.add(createStatCard("💰", "Total Biaya", lblTotalCost, MaterialTheme.TERTIARY,
+                MaterialTheme.TERTIARY_CONTAINER));
 
         return panel;
     }
 
-    private JPanel createStatCard(String title, JLabel valueLabel, Color color) {
-        JPanel card = new JPanel(new BorderLayout(10, 5));
-        card.setBackground(Color.WHITE);
-        card.setBorder(new CompoundBorder(
-                new LineBorder(new Color(220, 220, 220), 1, true),
-                new EmptyBorder(20, 20, 20, 20)));
+    private JPanel createStatCard(String icon, String title, JLabel valueLabel, Color accent, Color container) {
+        JPanel card = new JPanel(new BorderLayout(12, 8)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(container);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
+                g2.dispose();
+            }
+        };
+        card.setOpaque(false);
+        card.setBorder(new EmptyBorder(20, 24, 20, 24));
+
+        JLabel lblIcon = new JLabel(icon);
+        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
+
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+        textPanel.setOpaque(false);
 
         JLabel lblTitle = new JLabel(title);
-        lblTitle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblTitle.setForeground(Color.GRAY);
+        lblTitle.setFont(MaterialTheme.LABEL_MEDIUM);
+        lblTitle.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
 
-        valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        valueLabel.setForeground(color);
-        valueLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        valueLabel.setFont(MaterialTheme.HEADLINE_MEDIUM);
+        valueLabel.setForeground(accent);
 
-        card.add(lblTitle, BorderLayout.NORTH);
-        card.add(valueLabel, BorderLayout.CENTER);
+        textPanel.add(lblTitle);
+        textPanel.add(Box.createVerticalStrut(4));
+        textPanel.add(valueLabel);
+
+        card.add(lblIcon, BorderLayout.WEST);
+        card.add(textPanel, BorderLayout.CENTER);
 
         return card;
     }
 
     private JPanel createExpiringPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(new CompoundBorder(
-                new LineBorder(new Color(220, 220, 220), 1, true),
-                new EmptyBorder(20, 20, 20, 20)));
+        JPanel panel = new JPanel(new BorderLayout(0, 16)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(MaterialTheme.SURFACE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
+                g2.dispose();
+            }
+        };
+        panel.setOpaque(false);
+        panel.setBorder(new EmptyBorder(24, 24, 24, 24));
 
-        JLabel lblTitle = new JLabel("⚠️ Langganan Akan Expired (30 Hari Kedepan)");
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        lblTitle.setForeground(new Color(44, 62, 80));
-        lblTitle.setBorder(new EmptyBorder(0, 0, 15, 0));
+        JLabel lblTitle = new JLabel("⚠️ Akan Expired (30 Hari)");
+        lblTitle.setFont(MaterialTheme.TITLE_MEDIUM);
+        lblTitle.setForeground(MaterialTheme.ON_SURFACE);
 
         String[] cols = { "ID", "Nama Layanan", "Vendor", "Harga", "Tgl Expired", "Departemen", "Sisa Hari" };
         tableModel = new DefaultTableModel(cols, 0) {
@@ -98,48 +118,50 @@ public class ReportView extends JPanel {
         };
 
         tableExpiring = new JTable(tableModel);
-        tableExpiring.setRowHeight(32);
-        tableExpiring.setSelectionBackground(new Color(41, 128, 185, 50));
-        tableExpiring.getTableHeader().setBackground(new Color(241, 196, 15));
-        tableExpiring.getTableHeader().setForeground(Color.BLACK);
-        tableExpiring.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        MaterialTheme.styleTable(tableExpiring);
 
-        // Color code for remaining days
         tableExpiring.getColumnModel().getColumn(6).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 setHorizontalAlignment(CENTER);
+                setFont(MaterialTheme.LABEL_LARGE);
                 if (!isSelected && value != null) {
-                    int days = Integer.parseInt(value.toString().replace(" hari", ""));
+                    String v = value.toString();
+                    int days = Integer.parseInt(v.replace(" hari", ""));
                     if (days <= 7) {
-                        setBackground(new Color(231, 76, 60, 60));
-                        setForeground(new Color(192, 57, 43));
+                        setBackground(MaterialTheme.ERROR_CONTAINER);
+                        setForeground(MaterialTheme.ERROR);
                     } else if (days <= 14) {
-                        setBackground(new Color(241, 196, 15, 60));
-                        setForeground(new Color(156, 136, 0));
+                        setBackground(new Color(255, 243, 224));
+                        setForeground(MaterialTheme.WARNING);
                     } else {
-                        setBackground(new Color(39, 174, 96, 40));
-                        setForeground(new Color(39, 174, 96));
+                        setBackground(MaterialTheme.SUCCESS_CONTAINER);
+                        setForeground(MaterialTheme.SUCCESS);
                     }
                 }
                 return this;
             }
         });
 
+        JScrollPane sp = new JScrollPane(tableExpiring);
+        sp.setBorder(null);
+        sp.getViewport().setBackground(MaterialTheme.SURFACE);
+
         panel.add(lblTitle, BorderLayout.NORTH);
-        panel.add(new JScrollPane(tableExpiring), BorderLayout.CENTER);
+        panel.add(sp, BorderLayout.CENTER);
 
         return panel;
     }
 
     private JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
         panel.setOpaque(false);
 
-        btnRefresh = createButton("🔄 Refresh", PRIMARY);
-        btnExport = createButton("📥 Export Excel", SUCCESS);
+        btnRefresh = createMaterialBtn("🔄 Refresh", MaterialTheme.SECONDARY_CONTAINER,
+                MaterialTheme.ON_SECONDARY_CONTAINER);
+        btnExport = createMaterialBtn("📥 Export Excel", MaterialTheme.PRIMARY, MaterialTheme.ON_PRIMARY);
 
         btnRefresh.addActionListener(e -> loadData());
         btnExport.addActionListener(e -> exportReport());
@@ -150,15 +172,26 @@ public class ReportView extends JPanel {
         return panel;
     }
 
-    private JButton createButton(String text, Color bg) {
-        JButton btn = new JButton(text);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btn.setForeground(Color.WHITE);
-        btn.setBackground(bg);
-        btn.setFocusPainted(false);
+    private JButton createMaterialBtn(String text, Color bg, Color fg) {
+        JButton btn = new JButton(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getModel().isRollover() ? bg.darker() : bg);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btn.setFont(MaterialTheme.LABEL_LARGE);
+        btn.setForeground(fg);
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.setBorder(new EmptyBorder(10, 20, 10, 20));
+        btn.setBorder(new EmptyBorder(12, 24, 12, 24));
         return btn;
     }
 
@@ -186,18 +219,10 @@ public class ReportView extends JPanel {
                 active++;
                 totalCost = totalCost.add(harga);
 
-                // Check if expiring within 30 days
                 if (tglExpired != null && tglExpired.after(today) && tglExpired.before(thirtyDaysLater)) {
-                    long diffMillis = tglExpired.getTime() - today.getTime();
-                    long diffDays = diffMillis / (1000 * 60 * 60 * 24);
-
-                    tableModel.addRow(new Object[] {
-                            row[0], row[1], row[2],
-                            formatCurrency(harga),
-                            formatDate(tglExpired),
-                            row[6],
-                            diffDays + " hari"
-                    });
+                    long diffDays = (tglExpired.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+                    tableModel.addRow(new Object[] { row[0], row[1], row[2], formatCurrency(harga),
+                            formatDate(tglExpired), row[6], diffDays + " hari" });
                 }
             } else if ("expired".equalsIgnoreCase(status)) {
                 expired++;
@@ -216,8 +241,7 @@ public class ReportView extends JPanel {
     }
 
     private String formatDate(java.sql.Date date) {
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
-        return sdf.format(date);
+        return new java.text.SimpleDateFormat("dd-MM-yyyy").format(date);
     }
 
     private void exportReport() {

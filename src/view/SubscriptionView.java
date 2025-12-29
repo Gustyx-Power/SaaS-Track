@@ -1,15 +1,14 @@
 package view;
 
+import util.MaterialTheme;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.Date;
 
 /**
- * View untuk mengelola data langganan (CRUD Screen)
- * Layout: BorderLayout - form di West, JTable di Center, search di North
+ * SubscriptionView dengan Material Design 3
  */
 public class SubscriptionView extends JPanel {
 
@@ -21,12 +20,8 @@ public class SubscriptionView extends JPanel {
     private DefaultTableModel tableModel;
     private TableRowSorter<DefaultTableModel> sorter;
 
-    private static final Color PRIMARY = new Color(41, 128, 185);
-    private static final Color SUCCESS = new Color(39, 174, 96);
-    private static final Color DANGER = new Color(231, 76, 60);
-
     public SubscriptionView() {
-        setLayout(new BorderLayout(15, 15));
+        setLayout(new BorderLayout(24, 24));
         setOpaque(false);
         add(createSearchPanel(), BorderLayout.NORTH);
         add(createFormPanel(), BorderLayout.WEST);
@@ -35,87 +30,138 @@ public class SubscriptionView extends JPanel {
     }
 
     private JPanel createSearchPanel() {
-        JPanel p = new JPanel(new BorderLayout(10, 0));
-        p.setBackground(Color.WHITE);
-        p.setBorder(new CompoundBorder(new LineBorder(new Color(220, 220, 220)), new EmptyBorder(12, 15, 12, 15)));
+        JPanel p = new JPanel(new BorderLayout(16, 0)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(MaterialTheme.SURFACE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
+                g2.dispose();
+            }
+        };
+        p.setOpaque(false);
+        p.setBorder(new EmptyBorder(16, 24, 16, 24));
+
+        JLabel lbl = new JLabel("🔍");
+        lbl.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
 
         txtSearch = new JTextField();
-        txtSearch
-                .setBorder(new CompoundBorder(new LineBorder(new Color(200, 200, 200)), new EmptyBorder(8, 12, 8, 12)));
-        txtSearch.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e) {
+        txtSearch.setFont(MaterialTheme.BODY_LARGE);
+        txtSearch.setForeground(MaterialTheme.ON_SURFACE);
+        txtSearch.setBorder(null);
+        txtSearch.setOpaque(false);
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent e) {
                 filterTable();
             }
         });
 
-        p.add(new JLabel("🔍 Cari:"), BorderLayout.WEST);
+        p.add(lbl, BorderLayout.WEST);
         p.add(txtSearch, BorderLayout.CENTER);
         return p;
     }
 
     private JPanel createFormPanel() {
-        JPanel p = new JPanel();
+        JPanel p = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(MaterialTheme.SURFACE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
+                g2.dispose();
+            }
+        };
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-        p.setBackground(Color.WHITE);
-        p.setPreferredSize(new Dimension(280, 0));
-        p.setBorder(new CompoundBorder(new LineBorder(new Color(220, 220, 220)), new EmptyBorder(20, 20, 20, 20)));
+        p.setOpaque(false);
+        p.setPreferredSize(new Dimension(320, 0));
+        p.setBorder(new EmptyBorder(24, 24, 24, 24));
+
+        JLabel title = new JLabel("Form Langganan");
+        title.setFont(MaterialTheme.TITLE_MEDIUM);
+        title.setForeground(MaterialTheme.ON_SURFACE);
+        title.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         txtId = new JTextField();
         txtId.setVisible(false);
-        txtNamaLayanan = createTextField();
-        txtVendor = createTextField();
-        txtHarga = createTextField();
+        txtNamaLayanan = createMaterialField();
+        txtVendor = createMaterialField();
+        txtHarga = createMaterialField();
 
         dateSpinner = new JSpinner(new SpinnerDateModel());
         dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, "dd-MM-yyyy"));
-        dateSpinner.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        dateSpinner.setFont(MaterialTheme.BODY_MEDIUM);
+        dateSpinner.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
 
-        cmbStatus = new JComboBox<>(new String[] { "active", "expired", "cancelled" });
-        cmbStatus.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        cmbStatus = createMaterialCombo(new String[] { "active", "expired", "cancelled" });
+        cmbDepartment = createMaterialCombo(new String[] { "IT Department", "Marketing", "Human Resources" });
 
-        cmbDepartment = new JComboBox<>(new String[] { "IT Department", "Marketing", "Human Resources" });
-        cmbDepartment.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
-
-        addFormRow(p, "Nama Layanan *", txtNamaLayanan);
-        addFormRow(p, "Vendor *", txtVendor);
-        addFormRow(p, "Harga (Rp) *", txtHarga);
-        addFormRow(p, "Tgl Expired *", dateSpinner);
-        addFormRow(p, "Status *", cmbStatus);
-        addFormRow(p, "Departemen *", cmbDepartment);
-
-        p.add(Box.createVerticalStrut(20));
+        p.add(title);
+        p.add(Box.createVerticalStrut(24));
+        addFormRow(p, "Nama Layanan", txtNamaLayanan);
+        addFormRow(p, "Vendor", txtVendor);
+        addFormRow(p, "Harga (Rp)", txtHarga);
+        addFormRow(p, "Tgl Expired", dateSpinner);
+        addFormRow(p, "Status", cmbStatus);
+        addFormRow(p, "Departemen", cmbDepartment);
+        p.add(Box.createVerticalStrut(24));
         p.add(createButtonPanel());
         p.add(Box.createVerticalGlue());
         return p;
     }
 
-    private JTextField createTextField() {
-        JTextField tf = new JTextField();
-        tf.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
-        tf.setBorder(new CompoundBorder(new LineBorder(new Color(200, 200, 200)), new EmptyBorder(6, 10, 6, 10)));
+    private JTextField createMaterialField() {
+        JTextField tf = new JTextField() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(MaterialTheme.SURFACE_VARIANT);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        tf.setFont(MaterialTheme.BODY_MEDIUM);
+        tf.setForeground(MaterialTheme.ON_SURFACE);
+        tf.setOpaque(false);
+        tf.setBorder(new EmptyBorder(12, 16, 12, 16));
+        tf.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
+        tf.setCaretColor(MaterialTheme.PRIMARY);
         return tf;
+    }
+
+    private JComboBox<String> createMaterialCombo(String[] items) {
+        JComboBox<String> cb = new JComboBox<>(items);
+        cb.setFont(MaterialTheme.BODY_MEDIUM);
+        cb.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
+        cb.setBackground(MaterialTheme.SURFACE_VARIANT);
+        return cb;
     }
 
     private void addFormRow(JPanel p, String label, JComponent field) {
         JLabel lbl = new JLabel(label);
+        lbl.setFont(MaterialTheme.LABEL_MEDIUM);
+        lbl.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
         lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
         field.setAlignmentX(Component.LEFT_ALIGNMENT);
         p.add(lbl);
-        p.add(Box.createVerticalStrut(5));
+        p.add(Box.createVerticalStrut(8));
         p.add(field);
-        p.add(Box.createVerticalStrut(12));
+        p.add(Box.createVerticalStrut(16));
     }
 
     private JPanel createButtonPanel() {
-        JPanel p = new JPanel(new GridLayout(2, 2, 8, 8));
+        JPanel p = new JPanel(new GridLayout(2, 2, 12, 12));
         p.setOpaque(false);
-        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 112));
         p.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        btnSimpan = createBtn("💾 Simpan", SUCCESS);
-        btnEdit = createBtn("✏️ Update", PRIMARY);
-        btnHapus = createBtn("🗑️ Hapus", DANGER);
-        btnBersihkan = createBtn("🔄 Bersihkan", Color.GRAY);
+        btnSimpan = createMaterialBtn("Simpan", MaterialTheme.PRIMARY, MaterialTheme.ON_PRIMARY);
+        btnEdit = createMaterialBtn("Update", MaterialTheme.SECONDARY, Color.WHITE);
+        btnHapus = createMaterialBtn("Hapus", MaterialTheme.ERROR, Color.WHITE);
+        btnBersihkan = createMaterialBtn("Bersihkan", MaterialTheme.SURFACE_VARIANT, MaterialTheme.ON_SURFACE);
         btnBersihkan.addActionListener(e -> clearForm());
 
         p.add(btnSimpan);
@@ -125,20 +171,45 @@ public class SubscriptionView extends JPanel {
         return p;
     }
 
-    private JButton createBtn(String text, Color bg) {
-        JButton b = new JButton(text);
-        b.setForeground(Color.WHITE);
-        b.setBackground(bg);
-        b.setFocusPainted(false);
+    private JButton createMaterialBtn(String text, Color bg, Color fg) {
+        JButton b = new JButton(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getModel().isRollover() ? bg.darker() : bg);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        b.setFont(MaterialTheme.LABEL_LARGE);
+        b.setForeground(fg);
+        b.setOpaque(false);
+        b.setContentAreaFilled(false);
         b.setBorderPainted(false);
+        b.setFocusPainted(false);
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return b;
     }
 
     private JPanel createTablePanel() {
-        JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(Color.WHITE);
-        p.setBorder(new CompoundBorder(new LineBorder(new Color(220, 220, 220)), new EmptyBorder(15, 15, 15, 15)));
+        JPanel p = new JPanel(new BorderLayout(0, 16)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(MaterialTheme.SURFACE);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
+                g2.dispose();
+            }
+        };
+        p.setOpaque(false);
+        p.setBorder(new EmptyBorder(24, 24, 24, 24));
+
+        JLabel title = new JLabel("📋 Daftar Langganan");
+        title.setFont(MaterialTheme.TITLE_MEDIUM);
+        title.setForeground(MaterialTheme.ON_SURFACE);
 
         String[] cols = { "ID", "Nama Layanan", "Vendor", "Harga", "Tgl Expired", "Status", "Departemen" };
         tableModel = new DefaultTableModel(cols, 0) {
@@ -148,10 +219,7 @@ public class SubscriptionView extends JPanel {
         };
 
         table = new JTable(tableModel);
-        table.setRowHeight(32);
-        table.setSelectionBackground(new Color(41, 128, 185, 50));
-        table.getTableHeader().setBackground(new Color(44, 62, 80));
-        table.getTableHeader().setForeground(Color.WHITE);
+        MaterialTheme.styleTable(table);
 
         sorter = new TableRowSorter<>(tableModel);
         table.setRowSorter(sorter);
@@ -160,8 +228,12 @@ public class SubscriptionView extends JPanel {
                 populateForm();
         });
 
-        p.add(new JLabel("📋 Daftar Langganan"), BorderLayout.NORTH);
-        p.add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane sp = new JScrollPane(table);
+        sp.setBorder(null);
+        sp.getViewport().setBackground(MaterialTheme.SURFACE);
+
+        p.add(title, BorderLayout.NORTH);
+        p.add(sp, BorderLayout.CENTER);
         return p;
     }
 
@@ -202,7 +274,6 @@ public class SubscriptionView extends JPanel {
                 new Object[] { 4, "Zoom Pro", "Zoom", "Rp 300.000", "01-12-2024", "expired", "Human Resources" });
     }
 
-    // Getters
     public JTextField getTxtNamaLayanan() {
         return txtNamaLayanan;
     }
