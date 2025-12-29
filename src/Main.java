@@ -3,6 +3,8 @@ import view.MainFrame;
 import model.User;
 
 import javax.swing.*;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 
 /**
  * Main class - Entry point untuk aplikasi SaaS-Track
@@ -10,9 +12,14 @@ import javax.swing.*;
 public class Main {
 
     public static void main(String[] args) {
-        // Set Look and Feel
+        // Set FlatLaf Modern Look and Feel
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(new FlatLightLaf());
+            UIManager.put("Button.arc", 10);
+            UIManager.put("Component.arc", 10);
+            UIManager.put("TextComponent.arc", 10);
+            UIManager.put("ScrollBar.thumbArc", 999);
+            UIManager.put("ScrollBar.thumbInsets", new java.awt.Insets(2, 2, 2, 2));
         } catch (Exception e) {
             e.printStackTrace();
         }
