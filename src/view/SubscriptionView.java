@@ -1,14 +1,19 @@
 package view;
 
+import dao.SubscriptionDAO;
+import model.Subscription;
 import util.MaterialTheme;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
- * SubscriptionView dengan Material Design 3
+ * SubscriptionView dengan Material Design 3 dan CRUD functionality
  */
 public class SubscriptionView extends JPanel {
 
@@ -20,13 +25,144 @@ public class SubscriptionView extends JPanel {
     private DefaultTableModel tableModel;
     private TableRowSorter<DefaultTableModel> sorter;
 
+    private SubscriptionDAO subscriptionDAO;
+    private int[] deptIds = { 1, 2, 3 }; // ID untuk IT Department, Marketing, Human Resources
+
     public SubscriptionView() {
+        subscriptionDAO = new SubscriptionDAO();
         setLayout(new BorderLayout(24, 24));
         setOpaque(false);
         add(createSearchPanel(), BorderLayout.NORTH);
         add(createFormPanel(), BorderLayout.WEST);
         add(createTablePanel(), BorderLayout.CENTER);
-        loadSampleData();
+        loadDataFromDB();
+        setupButtonActions();
+    }
+
+    private void setupButtonActions() {
+        btnSimpan.addActionListener(e -> simpanData());
+        btnEdit.addActionListener(e -> updateData());
+        btnHapus.addActionListener(e -> hapusData());
+    }
+
+    private void simpanData() {
+        if (!validateForm())
+            return;
+
+        try {
+            Subscription sub = new Subscription();
+            sub.setNamaLayanan(txtNamaLayanan.getText().trim());
+            sub.setVendor(txtVendor.getText().trim());
+            sub.setHarga(new BigDecimal(txtHarga.getText().trim()));
+            sub.setTglExpired(new java.sql.Date(((Date) dateSpinner.getValue()).getTime()));
+            sub.setStatus((String) cmbStatus.getSelectedItem());
+            sub.setIdDept(deptIds[cmbDepartment.getSelectedIndex()]);
+
+            if (subscriptionDAO.insert(sub)) {
+                JOptionPane.showMessageDialog(this, "Data berhasil disimpan!", "Sukses",
+                        JOptionPane.INFORMATION_MESSAGE);
+                loadDataFromDB();
+                clearForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal menyimpan data!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateData() {
+        if (txtId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang akan diupdate!", "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!validateForm())
+            return;
+
+        try {
+            Subscription sub = new Subscription();
+            sub.setId(Integer.parseInt(txtId.getText()));
+            sub.setNamaLayanan(txtNamaLayanan.getText().trim());
+            sub.setVendor(txtVendor.getText().trim());
+            sub.setHarga(new BigDecimal(txtHarga.getText().trim()));
+            sub.setTglExpired(new java.sql.Date(((Date) dateSpinner.getValue()).getTime()));
+            sub.setStatus((String) cmbStatus.getSelectedItem());
+            sub.setIdDept(deptIds[cmbDepartment.getSelectedIndex()]);
+
+            if (subscriptionDAO.update(sub)) {
+                JOptionPane.showMessageDialog(this, "Data berhasil diupdate!", "Sukses",
+                        JOptionPane.INFORMATION_MESSAGE);
+                loadDataFromDB();
+                clearForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal mengupdate data!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void hapusData() {
+        if (txtId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus!", "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini?", "Konfirmasi",
+                JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            int id = Integer.parseInt(txtId.getText());
+            if (subscriptionDAO.delete(id)) {
+                JOptionPane.showMessageDialog(this, "Data berhasil dihapus!", "Sukses",
+                        JOptionPane.INFORMATION_MESSAGE);
+                loadDataFromDB();
+                clearForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus data!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private boolean validateForm() {
+        if (txtNamaLayanan.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nama layanan harus diisi!", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (txtVendor.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vendor harus diisi!", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (txtHarga.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Harga harus diisi!", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        try {
+            new BigDecimal(txtHarga.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Harga harus berupa angka!", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private void loadDataFromDB() {
+        tableModel.setRowCount(0);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        List<Object[]> data = subscriptionDAO.getAllSubscriptions();
+
+        for (Object[] row : data) {
+            Object[] tableRow = new Object[7];
+            tableRow[0] = row[0]; // id
+            tableRow[1] = row[1]; // nama_layanan
+            tableRow[2] = row[2]; // vendor
+            tableRow[3] = "Rp " + String.format("%,.0f", ((BigDecimal) row[3]).doubleValue()); // harga
+            tableRow[4] = sdf.format((java.sql.Date) row[4]); // tgl_expired
+            tableRow[5] = row[5]; // status
+            tableRow[6] = row[6]; // nama_dept
+            tableModel.addRow(tableRow);
+        }
     }
 
     private JPanel createSearchPanel() {
@@ -249,7 +385,14 @@ public class SubscriptionView extends JPanel {
         txtVendor.setText(tableModel.getValueAt(r, 2).toString());
         txtHarga.setText(tableModel.getValueAt(r, 3).toString().replaceAll("[^0-9]", ""));
         cmbStatus.setSelectedItem(tableModel.getValueAt(r, 5));
-        cmbDepartment.setSelectedItem(tableModel.getValueAt(r, 6));
+
+        String dept = tableModel.getValueAt(r, 6).toString();
+        for (int i = 0; i < cmbDepartment.getItemCount(); i++) {
+            if (cmbDepartment.getItemAt(i).equals(dept)) {
+                cmbDepartment.setSelectedIndex(i);
+                break;
+            }
+        }
     }
 
     public void clearForm() {
@@ -261,41 +404,6 @@ public class SubscriptionView extends JPanel {
         cmbStatus.setSelectedIndex(0);
         cmbDepartment.setSelectedIndex(0);
         table.clearSelection();
-    }
-
-    private void loadSampleData() {
-        tableModel.addRow(new Object[] { 1, "Microsoft 365", "Microsoft", "Rp 1.500.000", "31-12-2025", "active",
-                "IT Department" });
-        tableModel.addRow(
-                new Object[] { 2, "Adobe CC", "Adobe", "Rp 2.000.000", "30-06-2025", "active", "IT Department" });
-        tableModel.addRow(
-                new Object[] { 3, "Slack Business+", "Slack", "Rp 500.000", "15-03-2025", "active", "Marketing" });
-        tableModel.addRow(
-                new Object[] { 4, "Zoom Pro", "Zoom", "Rp 300.000", "01-12-2024", "expired", "Human Resources" });
-    }
-
-    public JTextField getTxtNamaLayanan() {
-        return txtNamaLayanan;
-    }
-
-    public JTextField getTxtVendor() {
-        return txtVendor;
-    }
-
-    public JTextField getTxtHarga() {
-        return txtHarga;
-    }
-
-    public JSpinner getDateSpinner() {
-        return dateSpinner;
-    }
-
-    public JComboBox<String> getCmbStatus() {
-        return cmbStatus;
-    }
-
-    public JComboBox<String> getCmbDepartment() {
-        return cmbDepartment;
     }
 
     public JButton getBtnSimpan() {

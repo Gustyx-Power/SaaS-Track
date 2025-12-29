@@ -1,13 +1,18 @@
 package view;
 
+import dao.DepartmentDAO;
+import model.Department;
 import util.MaterialTheme;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
- * DepartmentView dengan Material Design 3
+ * DepartmentView dengan Material Design 3 dan CRUD functionality
  */
 public class DepartmentView extends JPanel {
 
@@ -17,13 +22,130 @@ public class DepartmentView extends JPanel {
     private DefaultTableModel tableModel;
     private TableRowSorter<DefaultTableModel> sorter;
 
+    private DepartmentDAO departmentDAO;
+
     public DepartmentView() {
+        departmentDAO = new DepartmentDAO();
         setLayout(new BorderLayout(24, 24));
         setOpaque(false);
         add(createSearchPanel(), BorderLayout.NORTH);
         add(createFormPanel(), BorderLayout.WEST);
         add(createTablePanel(), BorderLayout.CENTER);
-        loadSampleData();
+        loadDataFromDB();
+        setupButtonActions();
+    }
+
+    private void setupButtonActions() {
+        btnSimpan.addActionListener(e -> simpanData());
+        btnEdit.addActionListener(e -> updateData());
+        btnHapus.addActionListener(e -> hapusData());
+    }
+
+    private void simpanData() {
+        if (!validateForm())
+            return;
+
+        try {
+            Department dept = new Department();
+            dept.setNamaDept(txtNamaDept.getText().trim());
+            dept.setBudgetLimit(new BigDecimal(txtBudgetLimit.getText().trim()));
+
+            if (departmentDAO.insert(dept)) {
+                JOptionPane.showMessageDialog(this, "Data berhasil disimpan!", "Sukses",
+                        JOptionPane.INFORMATION_MESSAGE);
+                loadDataFromDB();
+                clearForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal menyimpan data!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateData() {
+        if (txtId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang akan diupdate!", "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!validateForm())
+            return;
+
+        try {
+            Department dept = new Department();
+            dept.setId(Integer.parseInt(txtId.getText()));
+            dept.setNamaDept(txtNamaDept.getText().trim());
+            dept.setBudgetLimit(new BigDecimal(txtBudgetLimit.getText().trim()));
+
+            if (departmentDAO.update(dept)) {
+                JOptionPane.showMessageDialog(this, "Data berhasil diupdate!", "Sukses",
+                        JOptionPane.INFORMATION_MESSAGE);
+                loadDataFromDB();
+                clearForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal mengupdate data!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void hapusData() {
+        if (txtId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus!", "Peringatan",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini?", "Konfirmasi",
+                JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            int id = Integer.parseInt(txtId.getText());
+            if (departmentDAO.delete(id)) {
+                JOptionPane.showMessageDialog(this, "Data berhasil dihapus!", "Sukses",
+                        JOptionPane.INFORMATION_MESSAGE);
+                loadDataFromDB();
+                clearForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus data!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private boolean validateForm() {
+        if (txtNamaDept.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nama departemen harus diisi!", "Validasi",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (txtBudgetLimit.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Budget limit harus diisi!", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        try {
+            new BigDecimal(txtBudgetLimit.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Budget limit harus berupa angka!", "Validasi",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    private void loadDataFromDB() {
+        tableModel.setRowCount(0);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        List<Object[]> data = departmentDAO.getAllDepartments();
+
+        for (Object[] row : data) {
+            Object[] tableRow = new Object[4];
+            tableRow[0] = row[0];
+            tableRow[1] = row[1];
+            tableRow[2] = "Rp " + String.format("%,.0f", ((BigDecimal) row[2]).doubleValue());
+            tableRow[3] = row[3] != null ? sdf.format((java.sql.Timestamp) row[3]) : "-";
+            tableModel.addRow(tableRow);
+        }
     }
 
     private JPanel createSearchPanel() {
@@ -230,20 +352,6 @@ public class DepartmentView extends JPanel {
         txtNamaDept.setText("");
         txtBudgetLimit.setText("");
         table.clearSelection();
-    }
-
-    private void loadSampleData() {
-        tableModel.addRow(new Object[] { 1, "IT Department", "Rp 50.000.000", "2025-12-30" });
-        tableModel.addRow(new Object[] { 2, "Marketing", "Rp 30.000.000", "2025-12-30" });
-        tableModel.addRow(new Object[] { 3, "Human Resources", "Rp 20.000.000", "2025-12-30" });
-    }
-
-    public JTextField getTxtNamaDept() {
-        return txtNamaDept;
-    }
-
-    public JTextField getTxtBudgetLimit() {
-        return txtBudgetLimit;
     }
 
     public JButton getBtnSimpan() {
