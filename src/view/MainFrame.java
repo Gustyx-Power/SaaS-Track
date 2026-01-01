@@ -6,9 +6,10 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.*;
 
 /**
- * Dashboard Utama dengan Material Design 3
+ * Dashboard Utama - Matching User Reference Design
  */
 public class MainFrame extends JFrame {
 
@@ -41,21 +42,25 @@ public class MainFrame extends JFrame {
     private void initComponents() {
         setTitle("SaaS-Track - Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1300, 800);
+        setSize(1366, 800);
         setLocationRelativeTo(null);
-        setMinimumSize(new Dimension(1100, 700));
+        setMinimumSize(new Dimension(1200, 700));
 
-        // Main container
         JPanel mainContainer = new JPanel(new BorderLayout());
-        mainContainer.setBackground(MaterialTheme.BACKGROUND);
+        mainContainer.setBackground(new Color(245, 247, 251));
 
         createSidebar();
         createHeader();
         createContentArea();
 
         mainContainer.add(sidebarPanel, BorderLayout.WEST);
-        mainContainer.add(headerPanel, BorderLayout.NORTH);
-        mainContainer.add(contentPanel, BorderLayout.CENTER);
+
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setOpaque(false);
+        rightPanel.add(headerPanel, BorderLayout.NORTH);
+        rightPanel.add(contentPanel, BorderLayout.CENTER);
+
+        mainContainer.add(rightPanel, BorderLayout.CENTER);
 
         setContentPane(mainContainer);
     }
@@ -65,23 +70,20 @@ public class MainFrame extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(MaterialTheme.SURFACE);
+                MaterialTheme.enableQualityRendering(g2);
+                g2.setColor(Color.WHITE);
                 g2.fillRect(0, 0, getWidth(), getHeight());
-                // Right border
-                g2.setColor(MaterialTheme.OUTLINE_VARIANT);
-                g2.fillRect(getWidth() - 1, 0, 1, getHeight());
                 g2.dispose();
             }
         };
         sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
-        sidebarPanel.setPreferredSize(new Dimension(280, 0));
-        sidebarPanel.setBorder(new EmptyBorder(24, 16, 24, 16));
+        sidebarPanel.setPreferredSize(new Dimension(260, 0));
+        sidebarPanel.setBorder(new EmptyBorder(24, 20, 24, 20));
 
-        // Logo section
+        // Logo
         JPanel logoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         logoPanel.setOpaque(false);
-        logoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 72));
+        logoPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
 
         JLabel lblIcon = new JLabel("📊");
         lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
@@ -91,52 +93,43 @@ public class MainFrame extends JFrame {
         logoText.setOpaque(false);
 
         JLabel lblLogo = new JLabel("SaaS-Track");
-        lblLogo.setFont(MaterialTheme.TITLE_LARGE);
-        lblLogo.setForeground(MaterialTheme.PRIMARY);
+        lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblLogo.setForeground(new Color(30, 41, 59));
 
-        JLabel lblVersion = new JLabel("v1.0.0");
-        lblVersion.setFont(MaterialTheme.LABEL_SMALL);
-        lblVersion.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
+        JLabel lblVersion = new JLabel("Management System");
+        lblVersion.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lblVersion.setForeground(Color.GRAY);
 
         logoText.add(lblLogo);
         logoText.add(lblVersion);
-
         logoPanel.add(lblIcon);
         logoPanel.add(logoText);
 
-        // Menu section
-        JLabel lblMenu = new JLabel("MENU");
-        lblMenu.setFont(MaterialTheme.LABEL_SMALL);
-        lblMenu.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
-        lblMenu.setBorder(new EmptyBorder(0, 16, 8, 0));
-        lblMenu.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        btnDashboard = createNavButton("📊", "Dashboard", true);
-        btnSubscriptions = createNavButton("📋", "Data Langganan", false);
-        btnDepartments = createNavButton("🏢", "Data Departemen", false);
-        btnReports = createNavButton("📈", "Laporan", false);
+        // Navigation Buttons - Matching Reference
+        btnDashboard = createNavButton("⊞", "Dashboard", true);
+        btnSubscriptions = createNavButton("↗", "Subscription", false);
+        btnReports = createNavButton("✎", "Reports", false);
+        btnDepartments = createNavButton("⚙", "Departments", false); // Using Settings icon as in image
 
         activeButton = btnDashboard;
 
         btnDashboard.addActionListener(e -> showDashboard());
         btnSubscriptions.addActionListener(e -> showSubscriptions());
-        btnDepartments.addActionListener(e -> showDepartments());
         btnReports.addActionListener(e -> showReports());
+        btnDepartments.addActionListener(e -> showDepartments());
 
-        // User info at bottom
+        // User Profile (Gray Pill)
         JPanel userPanel = createUserInfoPanel();
 
         sidebarPanel.add(logoPanel);
-        sidebarPanel.add(Box.createVerticalStrut(32));
-        sidebarPanel.add(lblMenu);
-        sidebarPanel.add(Box.createVerticalStrut(8));
+        sidebarPanel.add(Box.createVerticalStrut(40));
         sidebarPanel.add(btnDashboard);
-        sidebarPanel.add(Box.createVerticalStrut(4));
+        sidebarPanel.add(Box.createVerticalStrut(5));
         sidebarPanel.add(btnSubscriptions);
-        sidebarPanel.add(Box.createVerticalStrut(4));
-        sidebarPanel.add(btnDepartments);
-        sidebarPanel.add(Box.createVerticalStrut(4));
+        sidebarPanel.add(Box.createVerticalStrut(5));
         sidebarPanel.add(btnReports);
+        sidebarPanel.add(Box.createVerticalStrut(5));
+        sidebarPanel.add(btnDepartments);
         sidebarPanel.add(Box.createVerticalGlue());
         sidebarPanel.add(userPanel);
     }
@@ -146,102 +139,113 @@ public class MainFrame extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                MaterialTheme.enableQualityRendering(g2);
 
                 if (this == activeButton) {
-                    g2.setColor(MaterialTheme.SECONDARY_CONTAINER);
+                    // Dark Navy active state from reference image
+                    g2.setColor(new Color(20, 30, 50));
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 } else if (getModel().isRollover()) {
-                    g2.setColor(MaterialTheme.SURFACE_VARIANT);
-                } else {
-                    g2.setColor(MaterialTheme.SURFACE);
+                    g2.setColor(new Color(241, 245, 249));
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 }
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
 
-        btn.setLayout(new FlowLayout(FlowLayout.LEFT, 16, 0));
+        btn.setLayout(new BoxLayout(btn, BoxLayout.X_AXIS));
         btn.setOpaque(false);
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
         btn.setFocusPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 56));
-        btn.setPreferredSize(new Dimension(248, 56));
+        btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
+        btn.setPreferredSize(new Dimension(220, 48));
+        btn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        btn.setBorder(new EmptyBorder(0, 16, 0, 16));
 
-        JLabel lblIcon = new JLabel(icon);
-        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
+        // Icon with fixed width for alignment
+        JLabel lblIcon = new JLabel(icon, SwingConstants.CENTER);
+        lblIcon.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 18));
+        lblIcon.setPreferredSize(new Dimension(28, 24));
+        lblIcon.setMaximumSize(new Dimension(28, 24));
 
         JLabel lblText = new JLabel(text);
-        lblText.setFont(MaterialTheme.LABEL_LARGE);
-        lblText.setForeground(isActive ? MaterialTheme.ON_SECONDARY_CONTAINER : MaterialTheme.ON_SURFACE_VARIANT);
+        lblText.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        btn.putClientProperty("lblText", lblText);
+        btn.putClientProperty("lblIcon", lblIcon);
 
         btn.add(lblIcon);
+        btn.add(Box.createRigidArea(new Dimension(12, 0)));
         btn.add(lblText);
+
+        updateButtonColor(btn, isActive);
 
         return btn;
     }
 
+    private void updateButtonColor(JButton btn, boolean isActive) {
+        JLabel lblText = (JLabel) btn.getClientProperty("lblText");
+        JLabel lblIcon = (JLabel) btn.getClientProperty("lblIcon");
+        if (lblText != null && lblIcon != null) {
+            if (isActive) {
+                lblText.setForeground(Color.WHITE);
+                lblIcon.setForeground(Color.WHITE);
+            } else {
+                lblText.setForeground(new Color(100, 116, 139));
+                lblIcon.setForeground(new Color(100, 116, 139));
+            }
+        }
+    }
+
+    private void setActiveMenu(JButton newBtn) {
+        if (activeButton != null)
+            updateButtonColor(activeButton, false);
+        activeButton = newBtn;
+        updateButtonColor(activeButton, true);
+        sidebarPanel.repaint();
+    }
+
     private JPanel createUserInfoPanel() {
-        JPanel panel = new JPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 0)) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(MaterialTheme.SURFACE_VARIANT);
+                MaterialTheme.enableQualityRendering(g2);
+                g2.setColor(new Color(241, 245, 249));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 g2.dispose();
             }
         };
-        panel.setLayout(new BorderLayout(12, 0));
         panel.setOpaque(false);
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 72));
-        panel.setBorder(new EmptyBorder(12, 16, 12, 16));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 56));
+        panel.setBorder(new EmptyBorder(8, 12, 8, 12));
 
-        // Avatar
         JLabel avatar = new JLabel("👤");
-        avatar.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 28));
+        avatar.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
 
-        // User info
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setOpaque(false);
 
         JLabel lblName = new JLabel(currentUser.getUsername());
-        lblName.setFont(MaterialTheme.LABEL_LARGE);
-        lblName.setForeground(MaterialTheme.ON_SURFACE);
+        lblName.setFont(new Font("Segoe UI", Font.BOLD, 13));
 
         JLabel lblRole = new JLabel(currentUser.getRole().toUpperCase());
-        lblRole.setFont(MaterialTheme.LABEL_SMALL);
-        lblRole.setForeground(MaterialTheme.PRIMARY);
+        lblRole.setFont(new Font("Segoe UI", Font.BOLD, 10));
+        lblRole.setForeground(Color.GRAY);
 
         infoPanel.add(lblName);
         infoPanel.add(lblRole);
 
-        // Logout button
-        btnLogout = new JButton("↪") {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                if (getModel().isRollover()) {
-                    g2.setColor(MaterialTheme.ERROR_CONTAINER);
-                }
-                g2.fillOval(0, 0, getWidth(), getHeight());
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
+        btnLogout = new JButton("→");
         btnLogout.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btnLogout.setForeground(MaterialTheme.ERROR);
-        btnLogout.setOpaque(false);
-        btnLogout.setContentAreaFilled(false);
         btnLogout.setBorderPainted(false);
+        btnLogout.setContentAreaFilled(false);
         btnLogout.setFocusPainted(false);
         btnLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnLogout.setPreferredSize(new Dimension(40, 40));
-        btnLogout.setToolTipText("Logout");
 
         panel.add(avatar, BorderLayout.WEST);
         panel.add(infoPanel, BorderLayout.CENTER);
@@ -251,31 +255,40 @@ public class MainFrame extends JFrame {
     }
 
     private void createHeader() {
-        headerPanel = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setColor(MaterialTheme.SURFACE);
-                g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.setColor(MaterialTheme.OUTLINE_VARIANT);
-                g2.fillRect(0, getHeight() - 1, getWidth(), 1);
-                g2.dispose();
-            }
-        };
-        headerPanel.setPreferredSize(new Dimension(0, 72));
-        headerPanel.setBorder(new EmptyBorder(0, 32, 0, 32));
+        headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setOpaque(false);
+        headerPanel.setPreferredSize(new Dimension(0, 80));
+        headerPanel.setBorder(new EmptyBorder(0, 40, 0, 40));
 
-        lblPageTitle = new JLabel("Dashboard");
-        lblPageTitle.setFont(MaterialTheme.HEADLINE_SMALL);
-        lblPageTitle.setForeground(MaterialTheme.ON_SURFACE);
+        JPanel titleContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        titleContainer.setOpaque(false);
 
-        headerPanel.add(lblPageTitle, BorderLayout.WEST);
+        JLabel btnCollapse = new JLabel("<");
+        btnCollapse.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnCollapse.setForeground(Color.GRAY);
+        btnCollapse.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
+
+        lblPageTitle = new JLabel("Dashboard Overview");
+        lblPageTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        lblPageTitle.setForeground(new Color(30, 41, 59));
+
+        titleContainer.add(btnCollapse);
+        titleContainer.add(lblPageTitle);
+
+        JButton btnNotif = new JButton("🔔");
+        btnNotif.setBackground(Color.WHITE);
+        btnNotif.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        btnNotif.setFocusPainted(false);
+        btnNotif.setContentAreaFilled(false);
+
+        headerPanel.add(titleContainer, BorderLayout.WEST);
+        headerPanel.add(btnNotif, BorderLayout.EAST);
     }
 
     private void createContentArea() {
         contentPanel = new JPanel(new CardLayout());
-        contentPanel.setBackground(MaterialTheme.BACKGROUND);
-        contentPanel.setBorder(new EmptyBorder(24, 32, 24, 32));
+        contentPanel.setOpaque(false);
+        contentPanel.setBorder(new EmptyBorder(10, 40, 40, 40));
 
         dashboardPanel = createDashboardPanel();
         subscriptionPanel = new SubscriptionView();
@@ -292,59 +305,138 @@ public class MainFrame extends JFrame {
         JPanel panel = new JPanel(new GridLayout(2, 2, 24, 24));
         panel.setOpaque(false);
 
-        panel.add(
-                createStatCard("📋", "Total Langganan", "24", MaterialTheme.PRIMARY, MaterialTheme.PRIMARY_CONTAINER));
-        panel.add(createStatCard("✅", "Langganan Aktif", "18", MaterialTheme.SUCCESS, MaterialTheme.SUCCESS_CONTAINER));
-        panel.add(createStatCard("⚠️", "Akan Expired", "3", MaterialTheme.WARNING, new Color(255, 243, 224)));
-        panel.add(createStatCard("🏢", "Total Departemen", "5", MaterialTheme.TERTIARY,
-                MaterialTheme.TERTIARY_CONTAINER));
+        Color blue = new Color(30, 86, 160);
+        Color green = new Color(34, 160, 107);
+        Color orange = new Color(220, 120, 20);
+        Color purple = new Color(125, 60, 152);
+
+        panel.add(createWaveCard("Total Langganan", "24", "Langganan Aktif", blue, "📊"));
+        panel.add(createWaveCard("Aktif Sekarang", "18", "Layanan Berjalan", green, "✅"));
+        panel.add(createWaveCard("Perlu Perhatian", "3", "Akan Expired", orange, "⏳"));
+        panel.add(createWaveCard("Total Departemen", "5", "Unit Kerja", purple, "🏢"));
 
         return panel;
     }
 
-    private JPanel createStatCard(String icon, String title, String value, Color accentColor, Color bgColor) {
-        JPanel card = new JPanel(new BorderLayout(16, 0)) {
+    private JPanel createWaveCard(String title, String value, String subtitle, Color themeColor, String iconEmoji) {
+        JPanel card = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(bgColor);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
+                MaterialTheme.enableQualityRendering(g2);
+
+                int w = getWidth();
+                int h = getHeight();
+
+                g2.setColor(Color.WHITE);
+                g2.fillRoundRect(0, 0, w, h, 24, 24);
+
+                g2.setColor(themeColor);
+                g2.fillRoundRect(0, 0, 8, h, 24, 24);
+                g2.fillRect(4, 0, 6, h);
+
+                drawWaveGraph(g2, w, h, themeColor);
+
                 g2.dispose();
             }
         };
+        card.setLayout(new BorderLayout());
         card.setOpaque(false);
-        card.setBorder(new EmptyBorder(32, 32, 32, 32));
 
-        JLabel lblIcon = new JLabel(icon);
-        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
+        JPanel topP = new JPanel(new BorderLayout());
+        topP.setOpaque(false);
+        topP.setBorder(new EmptyBorder(24, 24, 10, 24));
 
-        JPanel textPanel = new JPanel();
-        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-        textPanel.setOpaque(false);
-
-        JLabel lblValue = new JLabel(value);
-        lblValue.setFont(MaterialTheme.DISPLAY_SMALL);
-        lblValue.setForeground(accentColor);
-        lblValue.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        JPanel titleP = new JPanel(new GridLayout(3, 1, 0, 4));
+        titleP.setOpaque(false);
 
         JLabel lblTitle = new JLabel(title);
-        lblTitle.setFont(MaterialTheme.BODY_LARGE);
-        lblTitle.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
-        lblTitle.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        lblTitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblTitle.setForeground(new Color(100, 116, 139));
 
-        textPanel.add(lblValue);
-        textPanel.add(lblTitle);
+        JLabel lblValue = new JLabel(value);
+        lblValue.setFont(new Font("Segoe UI", Font.BOLD, 42));
+        lblValue.setForeground(new Color(30, 41, 59));
 
-        card.add(lblIcon, BorderLayout.WEST);
-        card.add(textPanel, BorderLayout.EAST);
+        JLabel lblSub = new JLabel(subtitle);
+        lblSub.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblSub.setForeground(themeColor);
+
+        titleP.add(lblTitle);
+        titleP.add(lblValue);
+        titleP.add(lblSub);
+
+        JPanel iconP = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        iconP.setOpaque(false);
+
+        JPanel iconBox = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                MaterialTheme.enableQualityRendering(g2);
+                g2.setColor(themeColor);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.dispose();
+            }
+        };
+        iconBox.setPreferredSize(new Dimension(50, 50));
+        iconBox.setLayout(new GridBagLayout());
+        iconBox.setOpaque(false);
+
+        JLabel lblIcon = new JLabel(iconEmoji);
+        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
+        lblIcon.setForeground(Color.WHITE);
+        iconBox.add(lblIcon);
+
+        iconP.add(iconBox);
+
+        topP.add(titleP, BorderLayout.CENTER);
+        topP.add(iconP, BorderLayout.EAST);
+
+        card.add(topP, BorderLayout.NORTH);
 
         return card;
     }
 
-    private void setActiveMenu(JButton btn) {
-        activeButton = btn;
-        sidebarPanel.repaint();
+    private void drawWaveGraph(Graphics2D g2, int w, int h, Color color) {
+        int bottomY = h;
+        int startX = 8;
+        int curveStartY = bottomY - 30;
+        int width = w - startX;
+
+        GeneralPath wave = new GeneralPath();
+        wave.moveTo(startX, bottomY);
+        wave.lineTo(startX, curveStartY);
+        wave.curveTo(
+                startX + width * 0.25, curveStartY - 40,
+                startX + width * 0.25, curveStartY + 10,
+                startX + width * 0.5, curveStartY - 20);
+        wave.curveTo(
+                startX + width * 0.75, curveStartY - 50,
+                startX + width * 0.75, curveStartY,
+                startX + width, bottomY - 60);
+        wave.lineTo(startX + width, bottomY);
+        wave.closePath();
+
+        GradientPaint gp = new GradientPaint(
+                0, bottomY - 80, new Color(color.getRed(), color.getGreen(), color.getBlue(), 80),
+                0, bottomY, new Color(255, 255, 255, 0));
+        g2.setPaint(gp);
+        g2.fill(wave);
+
+        g2.setColor(color);
+        g2.setStroke(new BasicStroke(3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        GeneralPath line = new GeneralPath();
+        line.moveTo(startX, curveStartY);
+        line.curveTo(
+                startX + width * 0.25, curveStartY - 40,
+                startX + width * 0.25, curveStartY + 10,
+                startX + width * 0.5, curveStartY - 20);
+        line.curveTo(
+                startX + width * 0.75, curveStartY - 50,
+                startX + width * 0.75, curveStartY,
+                startX + width, bottomY - 60);
+        g2.draw(line);
     }
 
     private void setupMenuAccess() {
@@ -357,27 +449,27 @@ public class MainFrame extends JFrame {
     private void showDashboard() {
         setActiveMenu(btnDashboard);
         ((CardLayout) contentPanel.getLayout()).show(contentPanel, "dashboard");
-        lblPageTitle.setText("Dashboard");
+        lblPageTitle.setText("Dashboard Overview");
     }
 
     private void showSubscriptions() {
         setActiveMenu(btnSubscriptions);
         ((CardLayout) contentPanel.getLayout()).show(contentPanel, "subscriptions");
-        lblPageTitle.setText("Data Langganan");
+        lblPageTitle.setText("Subscription Management");
     }
 
     private void showDepartments() {
         if (currentUser.isAdmin()) {
             setActiveMenu(btnDepartments);
             ((CardLayout) contentPanel.getLayout()).show(contentPanel, "departments");
-            lblPageTitle.setText("Data Departemen");
+            lblPageTitle.setText("Department Data");
         }
     }
 
     private void showReports() {
         setActiveMenu(btnReports);
         ((CardLayout) contentPanel.getLayout()).show(contentPanel, "reports");
-        lblPageTitle.setText("Laporan");
+        lblPageTitle.setText("Analytics & Reports");
     }
 
     public JButton getBtnLogout() {
