@@ -5,10 +5,10 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.RoundRectangle2D;
+import java.awt.geom.*;
 
 /**
- * Form Login dengan Material Design 3 (Material You) Style
+ * Form Login dengan Modern UI (Glassmorphism & Split Layout)
  */
 public class LoginView extends JFrame {
 
@@ -17,6 +17,10 @@ public class LoginView extends JFrame {
     private JButton btnLogin;
     private JLabel lblMessage;
 
+    // Custom colors for this view (Monet Blue Gradient)
+    private final Color GRADIENT_START = new Color(0, 97, 164); // Primary Blue
+    private final Color GRADIENT_END = new Color(24, 119, 242); // Brighter Blue
+
     public LoginView() {
         initComponents();
     }
@@ -24,177 +28,170 @@ public class LoginView extends JFrame {
     private void initComponents() {
         setTitle("SaaS-Track - Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 600);
+        setSize(900, 550);
         setLocationRelativeTo(null);
-        setResizable(false);
         setUndecorated(true);
-        setShape(new RoundRectangle2D.Double(0, 0, 500, 600, 28, 28));
+        // Rounded corners for the whole window
+        setShape(new RoundRectangle2D.Double(0, 0, 900, 550, MaterialTheme.CORNER_RADIUS_EXTRA_LARGE,
+                MaterialTheme.CORNER_RADIUS_EXTRA_LARGE));
 
-        // Main panel with gradient
-        JPanel mainPanel = new JPanel(new BorderLayout()) {
+        // Main Container
+        JPanel mainPanel = new JPanel(new GridLayout(1, 2));
+        mainPanel.setBackground(Color.WHITE);
+
+        // Left Panel (Branding / Gradient)
+        JPanel leftPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                GradientPaint gp = new GradientPaint(0, 0, new Color(103, 80, 164),
-                        getWidth(), getHeight(), new Color(79, 55, 139));
+                MaterialTheme.enableQualityRendering(g2);
+
+                // Diagonal Gradient
+                GradientPaint gp = new GradientPaint(0, 0, GRADIENT_START, getWidth(), getHeight(), GRADIENT_END);
                 g2.setPaint(gp);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+
+                // Decorative circles/shapes
+                g2.setColor(new Color(255, 255, 255, 20));
+                g2.fillOval(-50, -50, 200, 200);
+                g2.fillOval(getWidth() - 100, getHeight() - 100, 300, 300);
+
                 g2.dispose();
             }
         };
-        mainPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        leftPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
 
-        // Card Container
-        JPanel cardPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(MaterialTheme.SURFACE);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
-                g2.dispose();
-            }
-        };
-        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
-        cardPanel.setOpaque(false);
-        cardPanel.setBorder(new EmptyBorder(48, 40, 48, 40));
+        // Branding illustration
+        JLabel lblEmoji = new JLabel("📊");
+        lblEmoji.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 96));
+        lblEmoji.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // App icon/Logo
-        JLabel lblIcon = new JLabel("📊");
-        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 64));
-        lblIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel lblBrand = new JLabel("SaaS-Track");
+        lblBrand.setFont(MaterialTheme.DISPLAY_SMALL);
+        lblBrand.setForeground(Color.WHITE);
+        lblBrand.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Title
-        JLabel lblTitle = new JLabel("SaaS-Track");
-        lblTitle.setFont(MaterialTheme.HEADLINE_LARGE);
-        lblTitle.setForeground(MaterialTheme.PRIMARY);
-        lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel lblTagline1 = new JLabel("Platform Manajemen Langganan");
+        lblTagline1.setFont(MaterialTheme.BODY_LARGE);
+        lblTagline1.setForeground(new Color(255, 255, 255, 200));
+        lblTagline1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Subtitle
-        JLabel lblSubtitle = new JLabel("Sistem Manajemen Langganan");
-        lblSubtitle.setFont(MaterialTheme.BODY_MEDIUM);
-        lblSubtitle.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
-        lblSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel lblTagline2 = new JLabel("Terintegrasi & Modern");
+        lblTagline2.setFont(MaterialTheme.BODY_LARGE);
+        lblTagline2.setForeground(new Color(255, 255, 255, 200));
+        lblTagline2.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Username field with Material styling
-        JPanel usernameWrapper = createMaterialTextField("Username");
-        txtUsername = (JTextField) usernameWrapper.getClientProperty("textField");
+        leftPanel.add(Box.createVerticalGlue());
+        leftPanel.add(lblEmoji);
+        leftPanel.add(Box.createVerticalStrut(20));
+        leftPanel.add(lblBrand);
+        leftPanel.add(Box.createVerticalStrut(10));
+        leftPanel.add(lblTagline1);
+        leftPanel.add(lblTagline2);
+        leftPanel.add(Box.createVerticalGlue());
 
-        // Password field
-        JPanel passwordWrapper = createMaterialPasswordField("Password");
-        txtPassword = (JPasswordField) passwordWrapper.getClientProperty("passwordField");
+        // Right Panel (Form)
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setBackground(Color.WHITE);
 
-        // Message label
-        lblMessage = new JLabel(" ");
-        lblMessage.setFont(MaterialTheme.BODY_SMALL);
-        lblMessage.setForeground(MaterialTheme.ERROR);
-        lblMessage.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Login button - Material Filled Button
-        btnLogin = new JButton("Login") {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                if (getModel().isPressed()) {
-                    g2.setColor(MaterialTheme.PRIMARY.darker());
-                } else if (getModel().isRollover()) {
-                    g2.setColor(new Color(123, 100, 184));
-                } else {
-                    g2.setColor(MaterialTheme.PRIMARY);
-                }
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 28, 28);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        btnLogin.setFont(MaterialTheme.LABEL_LARGE);
-        btnLogin.setForeground(MaterialTheme.ON_PRIMARY);
-        btnLogin.setContentAreaFilled(false);
-        btnLogin.setBorderPainted(false);
-        btnLogin.setFocusPainted(false);
-        btnLogin.setOpaque(false);
-        btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnLogin.setMaximumSize(new Dimension(Integer.MAX_VALUE, 56));
-        btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Footer
-        JLabel lblFooter = new JLabel("© 2025 SaaS-Track - Kelompok 8");
-        lblFooter.setFont(MaterialTheme.LABEL_SMALL);
-        lblFooter.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
-        lblFooter.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Close button
-        JButton btnClose = new JButton("✕") {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                if (getModel().isRollover()) {
-                    g2.setColor(new Color(255, 255, 255, 50));
-                    g2.fillOval(0, 0, getWidth(), getHeight());
-                }
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        btnClose.setFont(MaterialTheme.TITLE_MEDIUM);
-        btnClose.setForeground(Color.WHITE);
+        // Custom Close Button
+        JButton btnClose = new JButton("×");
+        btnClose.setFont(new Font("Arial", Font.PLAIN, 28));
+        btnClose.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
         btnClose.setContentAreaFilled(false);
         btnClose.setBorderPainted(false);
         btnClose.setFocusPainted(false);
         btnClose.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnClose.setPreferredSize(new Dimension(40, 40));
         btnClose.addActionListener(e -> System.exit(0));
 
-        JPanel topBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        JPanel topBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topBar.setOpaque(false);
         topBar.add(btnClose);
 
-        // Assemble card
-        cardPanel.add(lblIcon);
-        cardPanel.add(Box.createVerticalStrut(16));
-        cardPanel.add(lblTitle);
-        cardPanel.add(Box.createVerticalStrut(4));
-        cardPanel.add(lblSubtitle);
-        cardPanel.add(Box.createVerticalStrut(40));
-        cardPanel.add(usernameWrapper);
-        cardPanel.add(Box.createVerticalStrut(16));
-        cardPanel.add(passwordWrapper);
-        cardPanel.add(Box.createVerticalStrut(8));
-        cardPanel.add(lblMessage);
-        cardPanel.add(Box.createVerticalStrut(24));
-        cardPanel.add(btnLogin);
-        cardPanel.add(Box.createVerticalGlue());
-        cardPanel.add(lblFooter);
+        // Form Container
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setOpaque(false);
+        formPanel.setBorder(new EmptyBorder(40, 60, 40, 60));
 
-        mainPanel.add(topBar, BorderLayout.NORTH);
-        mainPanel.add(cardPanel, BorderLayout.CENTER);
+        JLabel lblLoginTitle = new JLabel("Selamat Datang");
+        lblLoginTitle.setFont(MaterialTheme.HEADLINE_MEDIUM);
+        lblLoginTitle.setForeground(MaterialTheme.PRIMARY);
+        lblLoginTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        JLabel lblLoginSub = new JLabel("Silakan login untuk melanjutkan");
+        lblLoginSub.setFont(MaterialTheme.BODY_MEDIUM);
+        lblLoginSub.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
+        lblLoginSub.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Inputs
+        txtUsername = MaterialTheme.createTextField();
+        JPanel userWrap = createInputWrapper("Username", txtUsername);
+
+        txtPassword = new JPasswordField();
+        stylePasswordField(txtPassword);
+        JPanel passWrap = createInputWrapper("Password", txtPassword);
+
+        // Button
+        btnLogin = MaterialTheme.createGradientButton("LOGIN SEKARANG", GRADIENT_START, GRADIENT_END);
+        btnLogin.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        btnLogin.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        lblMessage = new JLabel(" ");
+        lblMessage.setFont(MaterialTheme.BODY_SMALL);
+        lblMessage.setForeground(MaterialTheme.ERROR);
+        lblMessage.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        formPanel.add(Box.createVerticalGlue());
+        formPanel.add(lblLoginTitle);
+        formPanel.add(Box.createVerticalStrut(5));
+        formPanel.add(lblLoginSub);
+        formPanel.add(Box.createVerticalStrut(40));
+        formPanel.add(userWrap);
+        formPanel.add(Box.createVerticalStrut(20));
+        formPanel.add(passWrap);
+        formPanel.add(Box.createVerticalStrut(10));
+        formPanel.add(lblMessage);
+        formPanel.add(Box.createVerticalStrut(30));
+        formPanel.add(btnLogin);
+        formPanel.add(Box.createVerticalGlue());
+
+        // Footer
+        JLabel lblFooter = new JLabel("© 2025 Kelompok 8");
+        lblFooter.setFont(MaterialTheme.LABEL_SMALL);
+        lblFooter.setForeground(MaterialTheme.OUTLINE);
+        lblFooter.setHorizontalAlignment(SwingConstants.CENTER);
+
+        rightPanel.add(topBar, BorderLayout.NORTH);
+        rightPanel.add(formPanel, BorderLayout.CENTER);
+        rightPanel.add(lblFooter, BorderLayout.SOUTH);
+
+        mainPanel.add(leftPanel);
+        mainPanel.add(rightPanel);
         setContentPane(mainPanel);
 
-        // Window drag support
-        final Point[] dragPoint = { null };
-        mainPanel.addMouseListener(new MouseAdapter() {
+        // Drag Support
+        MouseAdapter ma = new MouseAdapter() {
+            Point lastPoint;
+
             public void mousePressed(MouseEvent e) {
-                dragPoint[0] = e.getPoint();
+                lastPoint = e.getPoint();
             }
 
-            public void mouseReleased(MouseEvent e) {
-                dragPoint[0] = null;
-            }
-        });
-        mainPanel.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
-                if (dragPoint[0] != null) {
-                    Point loc = getLocation();
-                    setLocation(loc.x + e.getX() - dragPoint[0].x, loc.y + e.getY() - dragPoint[0].y);
+                if (lastPoint != null) {
+                    Point current = getLocation();
+                    setLocation(current.x + e.getX() - lastPoint.x, current.y + e.getY() - lastPoint.y);
                 }
             }
-        });
+        };
+        leftPanel.addMouseListener(ma);
+        leftPanel.addMouseMotionListener(ma);
+        rightPanel.addMouseListener(ma);
+        rightPanel.addMouseMotionListener(ma);
 
-        // Enter key
+        // Enter key support
         txtPassword.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER)
@@ -203,99 +200,49 @@ public class LoginView extends JFrame {
         });
     }
 
-    private JPanel createMaterialTextField(String hint) {
-        JPanel wrapper = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(MaterialTheme.SURFACE_VARIANT);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
-                g2.dispose();
-            }
-        };
-        wrapper.setOpaque(false);
-        wrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 56));
-        wrapper.setBorder(new EmptyBorder(0, 16, 0, 16));
+    // Helper to wrap inputs with label
+    private JPanel createInputWrapper(String label, JComponent field) {
+        JPanel p = new JPanel(new BorderLayout(5, 5));
+        p.setOpaque(false);
+        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
+        p.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JTextField tf = new JTextField();
-        tf.setFont(MaterialTheme.BODY_LARGE);
-        tf.setForeground(MaterialTheme.ON_SURFACE);
-        tf.setOpaque(false);
-        tf.setBorder(null);
-        tf.setCaretColor(MaterialTheme.PRIMARY);
+        JLabel l = new JLabel(label);
+        l.setFont(MaterialTheme.LABEL_MEDIUM);
+        l.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
 
-        JLabel lbl = new JLabel(hint);
-        lbl.setFont(MaterialTheme.BODY_SMALL);
-        lbl.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
-
-        JPanel inner = new JPanel(new BorderLayout());
-        inner.setOpaque(false);
-        inner.setBorder(new EmptyBorder(8, 0, 8, 0));
-        inner.add(lbl, BorderLayout.NORTH);
-        inner.add(tf, BorderLayout.CENTER);
-
-        wrapper.add(inner, BorderLayout.CENTER);
-        wrapper.putClientProperty("textField", tf);
-        return wrapper;
+        p.add(l, BorderLayout.NORTH);
+        p.add(field, BorderLayout.CENTER);
+        return p;
     }
 
-    private JPanel createMaterialPasswordField(String hint) {
-        JPanel wrapper = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(MaterialTheme.SURFACE_VARIANT);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
-                g2.dispose();
-            }
-        };
-        wrapper.setOpaque(false);
-        wrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 56));
-        wrapper.setBorder(new EmptyBorder(0, 16, 0, 16));
-
-        JPasswordField pf = new JPasswordField();
+    private void stylePasswordField(JPasswordField pf) {
         pf.setFont(MaterialTheme.BODY_LARGE);
         pf.setForeground(MaterialTheme.ON_SURFACE);
         pf.setOpaque(false);
-        pf.setBorder(null);
+        pf.setBorder(new EmptyBorder(12, 16, 12, 16));
         pf.setCaretColor(MaterialTheme.PRIMARY);
 
-        JLabel lbl = new JLabel(hint);
-        lbl.setFont(MaterialTheme.BODY_SMALL);
-        lbl.setForeground(MaterialTheme.ON_SURFACE_VARIANT);
-
-        JPanel inner = new JPanel(new BorderLayout());
-        inner.setOpaque(false);
-        inner.setBorder(new EmptyBorder(8, 0, 8, 0));
-        inner.add(lbl, BorderLayout.NORTH);
-        inner.add(pf, BorderLayout.CENTER);
-
-        wrapper.add(inner, BorderLayout.CENTER);
-        wrapper.putClientProperty("passwordField", pf);
-        return wrapper;
+        // We can't use the custom paintComponent of JTextField easily here without
+        // extending,
+        // so we'll wrap it in a border or just style basics.
+        // For consistency, let's just make it look clean with a border.
+        pf.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(MaterialTheme.OUTLINE_VARIANT, 1, true),
+                new EmptyBorder(10, 15, 10, 15)));
     }
 
     // Getters
-    public JTextField getTxtUsername() {
-        return txtUsername;
-    }
-
-    public JPasswordField getTxtPassword() {
-        return txtPassword;
-    }
-
-    public JButton getBtnLogin() {
-        return btnLogin;
-    }
-
     public String getUsername() {
         return txtUsername.getText().trim();
     }
 
     public String getPassword() {
         return new String(txtPassword.getPassword());
+    }
+
+    public JButton getBtnLogin() {
+        return btnLogin;
     }
 
     public void showError(String msg) {
