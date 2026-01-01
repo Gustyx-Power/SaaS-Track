@@ -61,17 +61,23 @@ Output yang diharapkan:
 
 ## 🚀 Menjalankan Aplikasi
 
-### Menggunakan Script (Recommended)
+### Linux/macOS
 ```bash
 ./run.sh
 ```
 
-### Manual
-```bash
-cd src
-javac -encoding UTF-8 -cp "../lib/*:." model/*.java util/*.java dao/*.java view/*.java Main.java
-java -cp "../lib/*:." Main
+### Windows
+Double-click `run.bat` atau jalankan di Command Prompt:
+```cmd
+run.bat
 ```
+
+### Menggunakan JAR (Cross-platform)
+```bash
+java -cp "dist/SaaS-Track.jar:lib/*" Main       # Linux/macOS
+java -cp "dist/SaaS-Track.jar;lib/*" Main       # Windows
+```
+
 
 ## 🔐 Akun Default
 
