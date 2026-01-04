@@ -74,12 +74,10 @@ sudo ./installer-requirements/fedora-rhel-dependencies-install.sh
 
 ### 🪟 Windows
 
-Jalankan PowerShell sebagai **Administrator**:
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force
-.\installer-requirements\windows-dependencies-install.ps1
+Double-click file batch berikut (akan otomatis meminta hak Administrator):
 ```
-
+installer-requirements\windows-dependencies-install.bat
+```
 > **Note:** Script akan otomatis menginstall Chocolatey, Java 17, MySQL, dan setup database.
 
 ---
@@ -185,7 +183,8 @@ SaaS-Track/
     ├── arch-dependencies-install.sh
     ├── fedora-rhel-dependencies-install.sh
     ├── macos-dependencies-install.sh
-    └── windows-dependencies-install.ps1
+    ├── windows-dependencies-install.bat  # Windows launcher (auto-elevate)
+    └── init.ps1                          # Windows PowerShell installer
 ```
 
 ---

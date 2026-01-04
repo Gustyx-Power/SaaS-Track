@@ -74,12 +74,17 @@ script installer sesuai sistem operasi Anda:
       ./installer-requirements/macos-dependencies-install.sh
 
 >> WINDOWS:
+   CARA MUDAH (Rekomendasi):
+   1. Buka folder installer-requirements di File Explorer
+   2. Double-click file "windows-dependencies-install.bat"
+   3. Klik "Yes" pada popup UAC untuk memberikan izin Administrator
+   4. Tunggu proses instalasi selesai
+
+   CARA MANUAL (PowerShell):
    1. Buka PowerShell sebagai Administrator
       (Klik kanan Start -> Windows PowerShell (Admin))
-   2. Masuk ke folder proyek: cd C:\path\ke\SaaS-Track
-   3. Jalankan:
-      Set-ExecutionPolicy Bypass -Scope Process -Force
-      .\installer-requirements\windows-dependencies-install.ps1
+   2. Jalankan:
+      powershell -ExecutionPolicy Bypass -File "C:\path\ke\SaaS-Track\installer-requirements\init.ps1"
 
 Script installer akan otomatis:
 - Menginstall Java JDK 17
@@ -195,7 +200,8 @@ SaaS-Track/
     ├── arch-dependencies-install.sh        -> Installer Arch Linux
     ├── fedora-rhel-dependencies-install.sh -> Installer Fedora/RHEL
     ├── macos-dependencies-install.sh       -> Installer macOS
-    └── windows-dependencies-install.ps1    -> Installer Windows
+    ├── windows-dependencies-install.bat    -> Launcher Windows (auto-elevate)
+    └── init.ps1                            -> Installer Windows (PowerShell)
 
 ================================================================================
                         BUKTI REPOSITORY GITHUB
