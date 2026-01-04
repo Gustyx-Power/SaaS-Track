@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">SaaS-Track Report Generator</property>
+    <property name="units">in</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="MySQL" id="3">
+            <property name="odaDriverClass">com.mysql.cj.jdbc.Driver</property>
+            <property name="odaURL">jdbc:mysql://localhost:3306/db_saas_track</property>
+            <property name="odaUser">saastrack</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">c2Fhc3RyYWNrMTIz</encrypted-property>
+        </oda-data-source>
+    </data-sources>
+    
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="SubscriptionData" id="4">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">id</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">nama_layanan</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">vendor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">harga</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">tgl_expired</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">nama_dept</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">MySQL</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">nama_layanan</property>
+                    <property name="nativeName">nama_layanan</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">vendor</property>
+                    <property name="nativeName">vendor</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">harga</property>
+                    <property name="nativeName">harga</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">tgl_expired</property>
+                    <property name="nativeName">tgl_expired</property>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">status</property>
+                    <property name="nativeName">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">nama_dept</property>
+                    <property name="nativeName">nama_dept</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[SELECT s.id, s.nama_layanan, s.vendor, s.harga, s.tgl_expired, s.status, d.nama_dept 
+FROM subscriptions s 
+INNER JOIN departments d ON s.id_dept = d.id 
+ORDER BY s.id]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="5">
+            <property name="type">a4</property>
+            <property name="orientation">landscape</property>
+        </simple-master-page>
+    </page-setup>
+    
+    <body>
+        <label id="100">
+            <property name="fontSize">18pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#1976D2</property>
+            <property name="textAlign">center</property>
+            <text-property name="text">SaaS-Track - Laporan Data Langganan</text-property>
+        </label>
+        
+        <table id="8">
+            <property name="dataSet">SubscriptionData</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">id</property>
+                    <expression name="expression">dataSetRow["id"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">nama_layanan</property>
+                    <expression name="expression">dataSetRow["nama_layanan"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">vendor</property>
+                    <expression name="expression">dataSetRow["vendor"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">harga</property>
+                    <expression name="expression">dataSetRow["harga"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">tgl_expired</property>
+                    <expression name="expression">dataSetRow["tgl_expired"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <expression name="expression">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">nama_dept</property>
+                    <expression name="expression">dataSetRow["nama_dept"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="9"/>
+            <column id="10"/>
+            <column id="11"/>
+            <column id="12"/>
+            <column id="13"/>
+            <column id="14"/>
+            <column id="15"/>
+            <header>
+                <row id="16">
+                    <property name="backgroundColor">#1976D2</property>
+                    <property name="fontWeight">bold</property>
+                    <property name="color">white</property>
+                    <cell id="17"><label id="24"><text-property name="text">ID</text-property></label></cell>
+                    <cell id="18"><label id="25"><text-property name="text">Nama Layanan</text-property></label></cell>
+                    <cell id="19"><label id="26"><text-property name="text">Vendor</text-property></label></cell>
+                    <cell id="20"><label id="27"><text-property name="text">Harga</text-property></label></cell>
+                    <cell id="21"><label id="28"><text-property name="text">Tgl Expired</text-property></label></cell>
+                    <cell id="22"><label id="29"><text-property name="text">Status</text-property></label></cell>
+                    <cell id="23"><label id="30"><text-property name="text">Departemen</text-property></label></cell>
+                </row>
+            </header>
+            <detail>
+                <row id="31">
+                    <cell id="32"><data id="39"><property name="resultSetColumn">id</property></data></cell>
+                    <cell id="33"><data id="40"><property name="resultSetColumn">nama_layanan</property></data></cell>
+                    <cell id="34"><data id="41"><property name="resultSetColumn">vendor</property></data></cell>
+                    <cell id="35"><data id="42"><property name="resultSetColumn">harga</property></data></cell>
+                    <cell id="36"><data id="43"><property name="resultSetColumn">tgl_expired</property></data></cell>
+                    <cell id="37"><data id="44"><property name="resultSetColumn">status</property></data></cell>
+                    <cell id="38"><data id="45"><property name="resultSetColumn">nama_dept</property></data></cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

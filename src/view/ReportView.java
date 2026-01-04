@@ -1,6 +1,7 @@
 package view;
 
 import dao.SubscriptionDAO;
+import util.BirtReportGenerator;
 import util.MaterialTheme;
 
 import javax.swing.*;
@@ -20,7 +21,7 @@ public class ReportView extends JPanel {
     private JTable tableExpiring;
     private DefaultTableModel tableModel;
     private JLabel lblTotalSubs, lblActiveSubs, lblExpiredSubs, lblTotalCost;
-    private JButton btnRefresh, btnExport;
+    private JButton btnRefresh, btnExport, btnExportPDF, btnExportHTML;
     private SubscriptionDAO subscriptionDAO;
 
     public ReportView() {
@@ -164,12 +165,18 @@ public class ReportView extends JPanel {
 
         btnRefresh = createMaterialBtn("🔄 Refresh", MaterialTheme.SECONDARY_CONTAINER,
                 MaterialTheme.ON_SECONDARY_CONTAINER);
+        btnExportPDF = createMaterialBtn("📄 Export PDF", MaterialTheme.ERROR, MaterialTheme.ON_PRIMARY);
+        btnExportHTML = createMaterialBtn("🌐 Export HTML", MaterialTheme.TERTIARY, MaterialTheme.ON_PRIMARY);
         btnExport = createMaterialBtn("📥 Export Excel", MaterialTheme.PRIMARY, MaterialTheme.ON_PRIMARY);
 
         btnRefresh.addActionListener(e -> loadData());
+        btnExportPDF.addActionListener(e -> BirtReportGenerator.generatePDFWithDialog());
+        btnExportHTML.addActionListener(e -> BirtReportGenerator.generateHTMLWithDialog());
         btnExport.addActionListener(e -> exportReport());
 
         panel.add(btnRefresh);
+        panel.add(btnExportPDF);
+        panel.add(btnExportHTML);
         panel.add(btnExport);
 
         return panel;

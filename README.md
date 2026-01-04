@@ -25,6 +25,7 @@ Aplikasi desktop berbasis Java Swing untuk mengelola langganan SaaS (Software as
 - CRUD Langganan (Subscriptions)
 - Manajemen Departemen
 - Laporan & Analitik
+- **Export Report ke PDF, HTML, dan Excel (BIRT)**
 - Otentikasi User (Admin/Operator)
 - UI Modern dengan Material Design 3
 
@@ -76,23 +77,19 @@ Output yang diharapkan:
 
 ## 🚀 Menjalankan Aplikasi
 
-### Linux/macOS
+### 🐧 Linux/macOS
 ```bash
+chmod +x run.sh    # Berikan permission (sekali saja)
 ./run.sh
 ```
 
-### Windows
+### 🪟 Windows
 Double-click `run.bat` atau jalankan di Command Prompt:
 ```cmd
 run.bat
 ```
 
-### Menggunakan JAR (Cross-platform)
-```bash
-java -cp "dist/SaaS-Track.jar:lib/*" Main       # Linux/macOS
-java -cp "dist/SaaS-Track.jar;lib/*" Main       # Windows
-```
-
+> **Note:** Script sudah menyertakan JVM flags untuk kompatibilitas Java 17+ dengan BIRT Report Engine.
 
 ## 🔐 Akun Default
 
@@ -100,6 +97,21 @@ java -cp "dist/SaaS-Track.jar;lib/*" Main       # Windows
 |------------|---------------|----------|
 | admin      | admin123      | Admin    |
 | operator1  | operator123   | Operator |
+
+## 📊 Export Report
+
+Aplikasi mendukung export laporan dalam 3 format:
+
+| Format | Deskripsi |
+|--------|-----------|
+| 📄 PDF | Menggunakan BIRT Report Engine |
+| 🌐 HTML | Export ke file HTML |
+| 📥 Excel | Menggunakan Apache POI |
+
+**Cara penggunaan:**
+1. Masuk ke menu **Reports**
+2. Klik tombol export yang diinginkan
+3. Pilih lokasi penyimpanan file
 
 ## 📁 Struktur Proyek
 
@@ -109,12 +121,16 @@ SaaS-Track/
 │   ├── model/          # Entity classes
 │   ├── view/           # UI components (Swing)
 │   ├── dao/            # Data Access Objects
-│   ├── util/           # Utilities (Theme, DB Connection)
+│   ├── util/           # Utilities (Theme, DB, BIRT)
 │   └── Main.java       # Entry point
 ├── lib/                # JAR dependencies
+│   └── birt/           # BIRT Report Engine (93 JARs)
+├── report/
+│   └── subscription_report.rptdesign  # BIRT template
 ├── sql/
-│   └── db_saas_track.sql  # Database schema & sample data
-└── run.sh              # Run script
+│   └── db_saas_track.sql
+├── run.sh              # Linux/macOS script
+└── run.bat             # Windows script
 ```
 
 ## 📚 Dependencies
@@ -122,6 +138,7 @@ SaaS-Track/
 - FlatLaf 3.4 (Modern Look and Feel)
 - MySQL Connector/J 8.2.0
 - Apache POI 5.2.5 (Excel export)
+- **BIRT Report Engine 4.18.0** (PDF & HTML export)
 
 ## 📄 License
 
