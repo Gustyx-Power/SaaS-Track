@@ -1,0 +1,213 @@
+================================================================================
+                         DOKUMENTASI PROYEK SAAS-TRACK
+                    Sistem Manajemen Langganan SaaS Terpadu
+================================================================================
+
+Dosen Pengampu    : M. Syaibani Anwar S.Si, M. Kom.
+Mata Kuliah       : Pemrograman Visual
+Kelompok          : 8
+
+================================================================================
+                              DESKRIPSI APLIKASI
+================================================================================
+
+SaaS-Track adalah aplikasi desktop berbasis Java Swing untuk mengelola 
+langganan Software as a Service (SaaS) per departemen dalam suatu organisasi.
+
+Fitur Utama:
+- Dashboard dengan statistik langganan
+- CRUD Langganan (Subscriptions)
+- Manajemen Departemen
+- Laporan & Analitik
+- Export Report ke PDF, HTML, dan Excel (menggunakan BIRT Report Engine)
+- Otentikasi User (Admin/Operator)
+- UI Modern dengan Material Design 3
+
+================================================================================
+                             TEKNOLOGI YANG DIGUNAKAN
+================================================================================
+
+1. Bahasa Pemrograman : Java 17+
+2. GUI Framework      : Java Swing
+3. Look and Feel      : FlatLaf 3.4
+4. Database           : MySQL 8.0+ / MariaDB
+5. Report Engine      : BIRT (Business Intelligence and Reporting Tools) 4.18.0
+6. Excel Export       : Apache POI 5.2.5
+
+================================================================================
+                             PERSYARATAN SISTEM
+================================================================================
+
+- Java JDK 17 atau lebih baru
+- MySQL 8.0+ atau MariaDB
+- Sistem Operasi: Windows, Linux, atau macOS
+
+================================================================================
+                           CARA INSTALASI DEPENDENSI
+================================================================================
+
+Buka folder proyek yang telah diberikan, kemudian jalankan salah satu 
+script installer sesuai sistem operasi Anda:
+
+>> UBUNTU / DEBIAN:
+   1. Buka Terminal
+   2. Masuk ke folder proyek: cd /path/ke/SaaS-Track
+   3. Jalankan:
+      sudo ./installer-requirements/ubuntu-deb-dependencies-install.sh
+
+>> ARCH LINUX:
+   1. Buka Terminal
+   2. Masuk ke folder proyek: cd /path/ke/SaaS-Track
+   3. Jalankan:
+      sudo ./installer-requirements/arch-dependencies-install.sh
+
+>> FEDORA / RHEL / CENTOS:
+   1. Buka Terminal
+   2. Masuk ke folder proyek: cd /path/ke/SaaS-Track
+   3. Jalankan:
+      sudo ./installer-requirements/fedora-rhel-dependencies-install.sh
+
+>> macOS:
+   1. Buka Terminal
+   2. Masuk ke folder proyek: cd /path/ke/SaaS-Track
+   3. Jalankan:
+      ./installer-requirements/macos-dependencies-install.sh
+
+>> WINDOWS:
+   1. Buka PowerShell sebagai Administrator
+      (Klik kanan Start -> Windows PowerShell (Admin))
+   2. Masuk ke folder proyek: cd C:\path\ke\SaaS-Track
+   3. Jalankan:
+      Set-ExecutionPolicy Bypass -Scope Process -Force
+      .\installer-requirements\windows-dependencies-install.ps1
+
+Script installer akan otomatis:
+- Menginstall Java JDK 17
+- Menginstall MySQL/MariaDB
+- Membuat database dan user
+- Mengimport skema database
+
+================================================================================
+                           CARA INSTALASI MANUAL
+================================================================================
+
+Jika script otomatis tidak berjalan, ikuti langkah berikut:
+
+1. INSTALL JAVA JDK 17
+   - Download dari: https://adoptium.net/
+   - Install dan pastikan JAVA_HOME sudah diset
+
+2. INSTALL MYSQL
+   - Download dari: https://dev.mysql.com/downloads/
+   - Install dan jalankan MySQL Server
+
+3. SETUP DATABASE
+   a. Login ke MySQL:
+      mysql -u root -p
+
+   b. Buat user database:
+      CREATE USER 'saastrack'@'localhost' IDENTIFIED BY 'saastrack123';
+      GRANT ALL PRIVILEGES ON db_saas_track.* TO 'saastrack'@'localhost';
+      FLUSH PRIVILEGES;
+
+   c. Import database (jalankan di Terminal/CMD):
+      mysql -u saastrack -p < sql/db_saas_track.sql
+
+================================================================================
+                          CARA MENJALANKAN APLIKASI
+================================================================================
+
+Setelah dependensi terinstall, jalankan aplikasi dengan script berikut:
+
+>> LINUX:
+   1. Buka Terminal
+   2. Masuk ke folder proyek: cd /path/ke/SaaS-Track
+   3. Berikan permission (sekali saja): chmod +x linux-run.sh
+   4. Jalankan: ./linux-run.sh
+
+>> macOS:
+   1. Buka Terminal
+   2. Masuk ke folder proyek: cd /path/ke/SaaS-Track
+   3. Berikan permission (sekali saja): chmod +x macos-run.sh
+   4. Jalankan: ./macos-run.sh
+
+>> WINDOWS:
+   1. Buka folder proyek di File Explorer
+   2. Double-click file "windows-run.bat"
+   
+   Atau melalui Command Prompt:
+   1. Buka CMD
+   2. Masuk ke folder proyek: cd C:\path\ke\SaaS-Track
+   3. Jalankan: windows-run.bat
+
+================================================================================
+                              AKUN DEFAULT
+================================================================================
+
+Gunakan akun berikut untuk login ke aplikasi:
+
++------------+---------------+----------+
+| Username   | Password      | Role     |
++------------+---------------+----------+
+| admin      | admin123      | Admin    |
+| operator1  | operator123   | Operator |
++------------+---------------+----------+
+
+================================================================================
+                               FITUR EXPORT
+================================================================================
+
+Aplikasi mendukung export laporan dalam 3 format:
+
+1. PDF   - Menggunakan BIRT Report Engine
+2. HTML  - Export ke file HTML
+3. Excel - Menggunakan Apache POI
+
+Cara penggunaan:
+1. Login ke aplikasi
+2. Masuk ke menu "Reports"
+3. Klik tombol export yang diinginkan (PDF/HTML/Excel)
+4. Pilih lokasi penyimpanan file
+
+================================================================================
+                            STRUKTUR PROYEK
+================================================================================
+
+SaaS-Track/
+├── src/
+│   ├── model/          -> Entity classes (User, Subscription, Department)
+│   ├── view/           -> UI components (Swing)
+│   ├── dao/            -> Data Access Objects
+│   ├── util/           -> Utilities (Theme, DB, BIRT)
+│   └── Main.java       -> Entry point aplikasi
+├── lib/                -> JAR dependencies
+│   └── birt/           -> BIRT Report Engine (93 JARs)
+├── report/
+│   └── subscription_report.rptdesign -> Template laporan BIRT
+├── sql/
+│   └── db_saas_track.sql -> Database schema dan sample data
+├── assets/             -> Screenshot aplikasi
+├── linux-run.sh        -> Script untuk menjalankan di Linux
+├── macos-run.sh        -> Script untuk menjalankan di macOS
+├── windows-run.bat     -> Script untuk menjalankan di Windows
+└── installer-requirements/
+    ├── ubuntu-deb-dependencies-install.sh  -> Installer Ubuntu/Debian
+    ├── arch-dependencies-install.sh        -> Installer Arch Linux
+    ├── fedora-rhel-dependencies-install.sh -> Installer Fedora/RHEL
+    ├── macos-dependencies-install.sh       -> Installer macOS
+    └── windows-dependencies-install.ps1    -> Installer Windows
+
+================================================================================
+                        BUKTI REPOSITORY GITHUB
+================================================================================
+
+Proyek ini juga tersedia di GitHub sebagai bukti version control:
+https://github.com/Gustyx-Power/SaaS-Track
+
+================================================================================
+                              KELOMPOK 8
+================================================================================
+
+Terima kasih telah meninjau proyek kami.
+
+================================================================================
