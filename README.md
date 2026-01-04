@@ -65,6 +65,13 @@ sudo ./arch-dependencies-install.sh
 sudo ./fedora-rhel-dependencies-install.sh
 ```
 
+### 🍎 macOS
+```bash
+./macos-dependencies-install.sh
+```
+
+> **Note:** Script akan otomatis menginstall Homebrew (jika belum ada), Java 17, MySQL, dan setup database.
+
 ### 🪟 Windows
 
 Jalankan PowerShell sebagai **Administrator**:
@@ -169,6 +176,7 @@ SaaS-Track/
 ├── ubuntu-deb-dependencies-install.sh  # Ubuntu/Debian installer
 ├── arch-dependencies-install.sh        # Arch Linux installer
 ├── fedora-rhel-dependencies-install.sh # Fedora/RHEL installer
+├── macos-dependencies-install.sh       # macOS installer
 └── windows-dependencies-install.ps1    # Windows installer
 ```
 
