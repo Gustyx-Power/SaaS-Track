@@ -32,10 +32,52 @@ Aplikasi desktop berbasis Java Swing untuk mengelola langganan SaaS (Software as
 ## 🛠️ Prasyarat
 
 - **Java JDK 17+** 
-- **MySQL 8.0+**
-- **Git** (opsional, untuk clone repository)
+- **MySQL 8.0+** atau **MariaDB**
+- **Git**
 
-## 🗄️ Setup Database
+## 📥 Clone Repository
+
+```bash
+git clone https://github.com/Gustyx-Power/SaaS-Track.git
+cd SaaS-Track
+```
+
+---
+
+## 🚀 Quick Install (Otomatis)
+
+### 🐧 Linux
+
+Pilih sesuai distro Anda:
+
+#### Ubuntu / Debian
+```bash
+sudo ./ubuntu-deb-dependencies-install.sh
+```
+
+#### Arch Linux
+```bash
+sudo ./arch-dependencies-install.sh
+```
+
+#### Fedora / RHEL / CentOS
+```bash
+sudo ./fedora-rhel-dependencies-install.sh
+```
+
+### 🪟 Windows
+
+Jalankan PowerShell sebagai **Administrator**:
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force
+.\windows-dependencies-install.ps1
+```
+
+> **Note:** Script akan otomatis menginstall Chocolatey, Java 17, MySQL, dan setup database.
+
+---
+
+## 🔧 Manual Setup (Opsional)
 
 ### 1. Login ke MySQL
 ```bash
@@ -54,42 +96,31 @@ FLUSH PRIVILEGES;
 mysql -u saastrack -p < sql/db_saas_track.sql
 ```
 
-Atau melalui MySQL CLI:
-```sql
-SOURCE /path/to/SaaS-Track/sql/db_saas_track.sql;
-```
-
 ### 4. Verifikasi
 ```sql
 USE db_saas_track;
 SHOW TABLES;
 ```
-Output yang diharapkan:
-```
-+-------------------------+
-| Tables_in_db_saas_track |
-+-------------------------+
-| departments             |
-| subscriptions           |
-| users                   |
-+-------------------------+
-```
 
-## 🚀 Menjalankan Aplikasi
+---
 
-### 🐧 Linux/macOS
+## ▶️ Menjalankan Aplikasi
+
+### 🐧 Linux / macOS
 ```bash
-chmod +x run.sh    # Berikan permission (sekali saja)
-./run.sh
+chmod +x linux-run.sh    # Berikan permission (sekali saja)
+./linux-run.sh
 ```
 
 ### 🪟 Windows
-Double-click `run.bat` atau jalankan di Command Prompt:
+Double-click `windows-run.bat` atau jalankan di Command Prompt:
 ```cmd
-run.bat
+windows-run.bat
 ```
 
 > **Note:** Script sudah menyertakan JVM flags untuk kompatibilitas Java 17+ dengan BIRT Report Engine.
+
+---
 
 ## 🔐 Akun Default
 
@@ -97,6 +128,8 @@ run.bat
 |------------|---------------|----------|
 | admin      | admin123      | Admin    |
 | operator1  | operator123   | Operator |
+
+---
 
 ## 📊 Export Report
 
@@ -113,6 +146,8 @@ Aplikasi mendukung export laporan dalam 3 format:
 2. Klik tombol export yang diinginkan
 3. Pilih lokasi penyimpanan file
 
+---
+
 ## 📁 Struktur Proyek
 
 ```
@@ -126,12 +161,18 @@ SaaS-Track/
 ├── lib/                # JAR dependencies
 │   └── birt/           # BIRT Report Engine (93 JARs)
 ├── report/
-│   └── subscription_report.rptdesign  # BIRT template
+│   └── subscription_report.rptdesign
 ├── sql/
 │   └── db_saas_track.sql
-├── run.sh              # Linux/macOS script
-└── run.bat             # Windows script
+├── linux-run.sh                        # Linux/macOS run script
+├── windows-run.bat                     # Windows run script
+├── ubuntu-deb-dependencies-install.sh  # Ubuntu/Debian installer
+├── arch-dependencies-install.sh        # Arch Linux installer
+├── fedora-rhel-dependencies-install.sh # Fedora/RHEL installer
+└── windows-dependencies-install.ps1    # Windows installer
 ```
+
+---
 
 ## 📚 Dependencies
 
@@ -139,6 +180,8 @@ SaaS-Track/
 - MySQL Connector/J 8.2.0
 - Apache POI 5.2.5 (Excel export)
 - **BIRT Report Engine 4.18.0** (PDF & HTML export)
+
+---
 
 ## 📄 License
 
