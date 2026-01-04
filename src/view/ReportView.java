@@ -106,11 +106,11 @@ public class ReportView extends JPanel {
         panel.setOpaque(false);
         panel.setBorder(new EmptyBorder(24, 24, 24, 24));
 
-        JLabel lblTitle = new JLabel("⚠️ Akan Expired (30 Hari)");
+        JLabel lblTitle = new JLabel("⚠️ Semua Data Expired");
         lblTitle.setFont(MaterialTheme.TITLE_MEDIUM);
         lblTitle.setForeground(MaterialTheme.ON_SURFACE);
 
-        String[] cols = { "ID", "Nama Layanan", "Vendor", "Harga", "Tgl Expired", "Departemen", "Sisa Hari" };
+        String[] cols = { "ID", "Nama Layanan", "Vendor", "Harga", "Tgl Expired", "Departemen", "Hari Lalu" };
         tableModel = new DefaultTableModel(cols, 0) {
             public boolean isCellEditable(int r, int c) {
                 return false;
@@ -130,13 +130,16 @@ public class ReportView extends JPanel {
                 if (!isSelected && value != null) {
                     String v = value.toString();
                     int days = Integer.parseInt(v.replace(" hari", ""));
-                    if (days <= 7) {
+                    if (days >= 14) {
+                        // Expired lebih dari 2 minggu - merah
                         setBackground(MaterialTheme.ERROR_CONTAINER);
                         setForeground(MaterialTheme.ERROR);
-                    } else if (days <= 14) {
+                    } else if (days >= 7) {
+                        // Expired 1-2 minggu - kuning/warning
                         setBackground(new Color(255, 243, 224));
                         setForeground(MaterialTheme.WARNING);
                     } else {
+                        // Baru expired kurang dari seminggu - hijau
                         setBackground(MaterialTheme.SUCCESS_CONTAINER);
                         setForeground(MaterialTheme.SUCCESS);
                     }
@@ -206,9 +209,6 @@ public class ReportView extends JPanel {
         tableModel.setRowCount(0);
 
         java.util.Date today = new java.util.Date();
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH, 30);
-        java.util.Date thirtyDaysLater = cal.getTime();
 
         for (Object[] row : allData) {
             String status = (String) row[5];
@@ -218,14 +218,15 @@ public class ReportView extends JPanel {
             if ("active".equalsIgnoreCase(status)) {
                 active++;
                 totalCost = totalCost.add(harga);
+            } else if ("expired".equalsIgnoreCase(status)) {
+                expired++;
 
-                if (tglExpired != null && tglExpired.after(today) && tglExpired.before(thirtyDaysLater)) {
-                    long diffDays = (tglExpired.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+                // Tampilkan semua subscription yang expired
+                if (tglExpired != null) {
+                    long diffDays = (today.getTime() - tglExpired.getTime()) / (1000 * 60 * 60 * 24);
                     tableModel.addRow(new Object[] { row[0], row[1], row[2], formatCurrency(harga),
                             formatDate(tglExpired), row[6], diffDays + " hari" });
                 }
-            } else if ("expired".equalsIgnoreCase(status)) {
-                expired++;
             }
         }
 
