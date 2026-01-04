@@ -4,6 +4,21 @@
 
 Aplikasi desktop berbasis Java Swing untuk mengelola langganan SaaS (Software as a Service) per departemen dalam organisasi.
 
+## 📸 Screenshots
+
+### Login
+![Login](assets/login.png)
+
+### Dashboard & Subscription
+![Dashboard](assets/dashboard.png)
+![Subscription](assets/subscription.png)
+
+### Departments & Reports
+![Departments](assets/departmens.png)
+![Reports](assets/reports.png)
+
+---
+
 ## 📋 Fitur
 
 - Dashboard dengan statistik langganan
