@@ -113,10 +113,16 @@ SHOW TABLES;
 
 ## ▶️ Menjalankan Aplikasi
 
-### 🐧 Linux / macOS
+### 🐧 Linux
 ```bash
 chmod +x linux-run.sh    # Berikan permission (sekali saja)
 ./linux-run.sh
+```
+
+### 🍎 macOS
+```bash
+chmod +x macos-run.sh    # Berikan permission (sekali saja)
+./macos-run.sh
 ```
 
 ### 🪟 Windows
@@ -171,7 +177,8 @@ SaaS-Track/
 │   └── subscription_report.rptdesign
 ├── sql/
 │   └── db_saas_track.sql
-├── linux-run.sh                        # Linux/macOS run script
+├── linux-run.sh                        # Linux run script
+├── macos-run.sh                        # macOS run script
 ├── windows-run.bat                     # Windows run script
 └── installer-requirements/             # Dependency installers
     ├── ubuntu-deb-dependencies-install.sh
