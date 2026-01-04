@@ -52,22 +52,22 @@ Pilih sesuai distro Anda:
 
 #### Ubuntu / Debian
 ```bash
-sudo ./ubuntu-deb-dependencies-install.sh
+sudo ./installer-requirements/ubuntu-deb-dependencies-install.sh
 ```
 
 #### Arch Linux
 ```bash
-sudo ./arch-dependencies-install.sh
+sudo ./installer-requirements/arch-dependencies-install.sh
 ```
 
 #### Fedora / RHEL / CentOS
 ```bash
-sudo ./fedora-rhel-dependencies-install.sh
+sudo ./installer-requirements/fedora-rhel-dependencies-install.sh
 ```
 
 ### 🍎 macOS
 ```bash
-./macos-dependencies-install.sh
+./installer-requirements/macos-dependencies-install.sh
 ```
 
 > **Note:** Script akan otomatis menginstall Homebrew (jika belum ada), Java 17, MySQL, dan setup database.
@@ -77,7 +77,7 @@ sudo ./fedora-rhel-dependencies-install.sh
 Jalankan PowerShell sebagai **Administrator**:
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force
-.\windows-dependencies-install.ps1
+.\installer-requirements\windows-dependencies-install.ps1
 ```
 
 > **Note:** Script akan otomatis menginstall Chocolatey, Java 17, MySQL, dan setup database.
@@ -173,11 +173,12 @@ SaaS-Track/
 │   └── db_saas_track.sql
 ├── linux-run.sh                        # Linux/macOS run script
 ├── windows-run.bat                     # Windows run script
-├── ubuntu-deb-dependencies-install.sh  # Ubuntu/Debian installer
-├── arch-dependencies-install.sh        # Arch Linux installer
-├── fedora-rhel-dependencies-install.sh # Fedora/RHEL installer
-├── macos-dependencies-install.sh       # macOS installer
-└── windows-dependencies-install.ps1    # Windows installer
+└── installer-requirements/             # Dependency installers
+    ├── ubuntu-deb-dependencies-install.sh
+    ├── arch-dependencies-install.sh
+    ├── fedora-rhel-dependencies-install.sh
+    ├── macos-dependencies-install.sh
+    └── windows-dependencies-install.ps1
 ```
 
 ---
